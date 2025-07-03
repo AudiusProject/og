@@ -20,10 +20,9 @@ interface ChallengeData {
 	data?: Challenge[];
 }
 
-async function fetchAllocation(handle: string): Promise<number | null> {
+async function fetchAllocation(c: Context, handle: string): Promise<number | null> {
 	if (!handle) return null;
-
-	const baseUrl = 'https://discoveryprovider.audius.co';
+	const baseUrl = c.env.API_URL;
 
 	try {
 		const userResponse = await fetch(`${baseUrl}/v1/users/handle/${handle}`);
@@ -46,7 +45,7 @@ async function fetchAllocation(handle: string): Promise<number | null> {
 app.on('GET', ['/airdrop/', '/airdrop/:handle?'], async (c) => {
 	try {
 		const handle = c.req.param('handle');
-		const totalAllocation = handle ? await fetchAllocation(handle) : null;
+		const totalAllocation = handle ? await fetchAllocation(c, handle) : null;
 
 		const firstLine = handle ? `@${handle}` : '';
 		const secondLine =
@@ -129,8 +128,9 @@ type CommentData = {
 	user: any;
 };
 
-export const getCommentDataById = async (id: string): Promise<CommentData> => {
-	const url = `https://api.audius.co/v1/full/comments/${id}`;
+export const getCommentDataById = async (c: Context, id: string): Promise<CommentData> => {
+	const baseUrl = c.env.API_URL;
+	const url = `${baseUrl}/v1/full/comments/${id}`;
 	const res = await fetch(url);
 	const { data, related } = (await res.json()) as CommentResponse;
 	const comment = Array.isArray(data) ? data[0] : data;
@@ -163,7 +163,7 @@ const getBadgeTier = (balance: number) => {
 };
 
 const renderCommentOGImage = async (c: Context, commentId: string) => {
-	const { comment, track, user } = await getCommentDataById(commentId);
+	const { comment, track, user } = await getCommentDataById(c, commentId);
 
 	const trackName = track.title;
 	const artistName = track.user.name;
@@ -222,13 +222,15 @@ const renderCommentOGImage = async (c: Context, commentId: string) => {
 						alignItems: 'center',
 					}}
 				>
-					{trackArtwork && (
+					{trackArtwork ? (
 						<img
 							src={trackArtwork}
 							alt="Track Artwork"
+							height={120}
+							width={120}
 							style={{ width: '120px', height: '120px', borderRadius: '10px' }}
 						/>
-					)}
+					) : null}
 					<div
 						style={{
 							display: 'flex',
@@ -274,32 +276,38 @@ const renderCommentOGImage = async (c: Context, commentId: string) => {
 								By {artistName}
 							</p>
 							<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-								{isArtistVerified && verifiedIconWhite && (
+								{isArtistVerified && verifiedIconWhite ? (
 									<img
 										src={verifiedIconWhite}
 										alt="Verified"
+										height={32}
+										width={32}
 										style={{ width: '32px', height: '32px', flexBasis: '32px' }}
 									/>
-								)}
-								{artistTier && artistTierIcon && (
+								) : null}
+								{artistTier && artistTierIcon ? (
 									<img
 										src={artistTierIcon}
 										alt="Artist Tier"
+										height={32}
+										width={32}
 										style={{ width: '32px', height: '32px', flexBasis: '32px' }}
 									/>
-								)}
+								) : null}
 							</div>
 						</div>
 					</div>
 				</div>
 				<div style={{ display: 'flex', alignSelf: 'flex-start', width: '200px' }}>
-					{audiusLogo && (
+					{audiusLogo ? (
 						<img
 							src={audiusLogo}
 							alt="Audius Logo"
+							height={48}
+							width={200}
 							style={{ width: '200px' }}
 						/>
-					)}
+					) : null}
 				</div>
 			</div>
 			<div
@@ -321,13 +329,15 @@ const renderCommentOGImage = async (c: Context, commentId: string) => {
 					}}
 				>
 					<div style={{ display: 'flex', alignSelf: 'flex-start', flexBasis: '128px' }}>
-						{userProfilePicture && (
+						{userProfilePicture ? (
 							<img
 								src={userProfilePicture}
 								alt="Profile Picture"
+								height={128}
+								width={128}
 								style={{ width: '128px', height: '128px', borderRadius: '50%' }}
 							/>
-						)}
+						) : null}
 					</div>
 					<div
 						style={{
@@ -361,6 +371,8 @@ const renderCommentOGImage = async (c: Context, commentId: string) => {
 									<img
 										src={verifiedIcon}
 										alt="Verified"
+										height={52}
+										width={52}
 										style={{ width: '52px', height: '52px' }}
 									/>
 								) : null}
@@ -368,6 +380,8 @@ const renderCommentOGImage = async (c: Context, commentId: string) => {
 									<img
 										src={commenterTierIcon}
 										alt="Commenter Tier"
+										height={52}
+										width={52}
 										style={{ width: '52px', height: '52px' }}
 									/>
 								) : null}
