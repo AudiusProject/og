@@ -1,4 +1,4 @@
-name = "og"
+name = "og-staging"
 main = "src/index.ts"
 compatibility_date = "2024-11-06"
 compatibility_flags = [ "nodejs_compat_v2" ]
@@ -6,7 +6,7 @@ assets = { directory = "public",  binding = "ASSETS" }
 minify = true
 
 [vars]
-API_URL = "https://api.audius.co"
+API_URL = "https://api.staging.audius.co"
 
 [build]
-watch_dir = "public"
+watch_dir = "public" 

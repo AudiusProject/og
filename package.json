@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev src/index.ts",
-    "deploy": "wrangler deploy --minify src/index.ts"
+    "dev:staging": "wrangler dev src/index.ts --config wrangler.staging.toml",
+    "deploy": "wrangler deploy --minify src/index.ts",
+    "deploy:staging": "wrangler deploy --minify src/index.ts --config wrangler.staging.toml"
   },
   "dependencies": {
     "@cloudflare/pages-plugin-vercel-og": "^0.1.2",
