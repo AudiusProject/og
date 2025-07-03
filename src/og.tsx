@@ -132,14 +132,18 @@ type CommentData = {
 export const getCommentDataById = async (id: string): Promise<CommentData> => {
 	const url = `https://api.audius.co/v1/full/comments/${id}`;
 	const res = await fetch(url);
-	const { data: comment, related } = (await res.json()) as CommentResponse;
+	const { data, related } = (await res.json()) as CommentResponse;
+	const comment = Array.isArray(data) ? data[0] : data;
 
 	if (!comment) throw new Error(`Failed to get comment ${id}`);
 
+	const track = related.tracks.find((t: any) => t.id === comment.entity_id);
+	const user = related.users.find((u: any) => u.id === comment.user_id);
+
 	return {
 		comment,
-		track: related.tracks[0],
-		user: related.users[0],
+		track,
+		user,
 	};
 };
 
@@ -166,7 +170,7 @@ const renderCommentOGImage = async (c: Context, commentId: string) => {
 	const isArtistVerified = track.user.is_verified;
 	const artistTier = getBadgeTier(track.user.total_audio_balance);
 
-	const commentText = comment[0].message;
+	const commentText = comment.message;
 	const commenterName = user.name;
 	const isCommenterVerified = user.is_verified;
 	const commenterTier = getBadgeTier(user.total_audio_balance);
