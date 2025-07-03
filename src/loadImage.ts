@@ -7,7 +7,12 @@ export async function loadImage(c: Context, imagePath: string): Promise<string |
 		}
 
 		const imageUrl = new URL(imagePath, c.req.url).toString();
-		const imageData = await c.env.ASSETS.fetch(imageUrl);
+		let imageData = await c.env.ASSETS.fetch(imageUrl);
+
+		// If the image is not found in the ASSETS bucket, fetch it
+		if (!imageData || imageData.status !== 200) {
+			imageData = await fetch(imageUrl);
+		}
 
 		// Get content-type from response
 		const contentType = imageData.headers.get('content-type') || 'image/png';
