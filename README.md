@@ -1,15 +1,16 @@
 # Dynamic OG Image Generator with Cloudflare Workers
 
-A high-performance Open Graph image generator built with Cloudflare Workers, Hono, and Vercel OG. Generate beautiful social media cards dynamically with support for multiple font loading strategies and visual styles.
+A high-performance Open Graph image generator built with Cloudflare Workers, Hono, and Vercel OG. Generate beautiful social media cards dynamically for Audius content including tracks, collections, users, comments, and airdrops.
 
 ## Features
 
 - 🚀 Built on Cloudflare Workers for edge computing
-- ⚡ Multiple pre-designed card styles
-- 🎨 Flexible font loading strategies
-- 🔄 Built-in caching support
-- 📱 Responsive designs
-- 🎯 Tailwind CSS styling
+- ⚡ Multiple content types (tracks, collections, users, comments, airdrops)
+- 🎨 Consistent design system with reusable components
+- 🔄 Centralized API service with error handling
+- 📱 Responsive OG images (1200x630)
+- 🎯 TypeScript with full type safety
+- 🏗️ Clean, modular architecture
 
 ## Quick Start
 
@@ -26,62 +27,52 @@ bun run deploy
 
 ## Usage
 
-Generate OG images by making GET requests with query parameters:
+Generate OG images by making GET requests to specific endpoints:
 
+### Currently Available
+
+#### Airdrop Images
 ```
-/og?mainText=Your Title&description=Your Description&footerText=Footer Text&style=1
-```
-
-### Query Parameters
-
-- `mainText`: Main heading text
-- `description`: Detailed description
-- `footerText`: Footer content
-- `style`: Visual style (1-4)
-
-## Font Loading Strategies
-
-The project supports multiple font loading methods:
-
-### 1. Google Fonts
-
-```typescript
-const font = await googleFont(text, 'Noto Sans JP', 900, 'normal');
+/airdrop/[handle]?  # Optional handle parameter
 ```
 
-### 2. GitHub-hosted Fonts
-
-```typescript
-const font = await githubFonts();
+#### Comment Images
+```
+/comment/[comment-id]     # Direct comment route
+/og/comment/[comment-id]  # Generic route
 ```
 
-### 3. Direct URL Fonts
-
-```typescript
-const font = await directFont('https://example.com/fonts/CustomFont.ttf', 'CustomFont', 400, 'normal');
+### Coming Soon
+```
+/og/track/[track-id]      # Track OG images
+/og/user/[user-id]        # User profile OG images  
+/og/collection/[collection-id]  # Collection OG images
 ```
 
-### 4. Local Fonts
+## Architecture
 
-```typescript
-const font = await getLocalFonts(c, [
-	{ path: 'Poppins-Regular.ttf', weight: 400 },
-	{ path: 'Poppins-Bold.ttf', weight: 700 },
-]);
-```
+The project follows a clean, feature-based architecture:
 
-## Visual Styles
+- **Features**: Each content type has its own directory with route + renderer
+- **Shared**: Common components, services, utilities, and types
+- **Components**: Reusable React components
+- **Services**: Centralized API service
+- **Types**: Full TypeScript type definitions
+- **Utils**: Shared utility functions
+- **Config**: Centralized constants and configuration
 
-The generator includes 4 pre-designed styles:
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation.
 
-1. **Style 1**: Modern gradient with glass effect (Blue theme)
-2. **Style 2**: Eco/Green technology theme
-3. **Style 3**: Cloudflare-inspired design with logo
-4. **Style 4**: GitHub profile card style
+## Adding New Content Types
 
-## Caching
+To add a new OG image type:
 
-The project includes built-in caching support for both fonts and generated images. Enable caching by uncommenting the cache middleware in `index.ts`.
+1. Create `src/[feature-name].tsx` with route + renderer
+3. Add API method in `src/shared/services/api.ts`
+4. Add types if needed in `src/shared/types/index.ts`
+5. Add route in `src/index.ts` using `.route('/[feature-name]', [featureName]Route)`
+
+See `src/template.tsx` for a complete example.
 
 ## Tech Stack
 
@@ -89,12 +80,8 @@ The project includes built-in caching support for both fonts and generated image
 - Hono Framework
 - Vercel OG
 - TypeScript
-- Tailwind CSS
+- React (for OG image components)
 
 ## License
 
 MIT
-
----
-
-For more examples and detailed documentation, visit the [GitHub repository](https://github.com/mohdlatif/og-image-generator-cloudflare-worker).

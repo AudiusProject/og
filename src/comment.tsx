@@ -1,0 +1,252 @@
+import { Hono } from "hono";
+import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
+import { BaseLayout } from "./shared/components/BaseLayout";
+import { UserBadge } from "./shared/components/UserBadge";
+import { APIService } from "./shared/services/api";
+import { getBadgeTier, getBadgeIconPath } from "./shared/utils/badge";
+import { getLocalFonts } from "./shared/utils/getFonts";
+import { loadImage } from "./shared/utils/loadImage";
+import { ICON_PATHS } from "./shared/config/constants";
+
+// Route definition
+export const commentRoute = new Hono().get("/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    if (!id) {
+      return c.json({ error: "Missing comment ID" }, 400);
+    }
+    return await renderCommentOGImage(c, id);
+  } catch (error: any) {
+    console.error("Comment OG Image generation error:", error);
+    return c.json({ error: "Failed to generate comment image", details: error.message }, 500);
+  }
+});
+
+// Render function
+async function renderCommentOGImage(c: any, commentId: string) {
+  const apiService = new APIService(c);
+  const { comment, track, user } = await apiService.getCommentDataById(commentId);
+
+  const trackName = track.title;
+  const artistName = track.user.name;
+  const isArtistVerified = track.user.is_verified;
+  const artistTier = getBadgeTier(track.user.total_audio_balance);
+
+  const commentText = comment.message;
+  const commenterName = user.name;
+  const isCommenterVerified = user.is_verified;
+  const commenterTier = getBadgeTier(user.total_audio_balance);
+
+  const [
+    trackArtwork,
+    userProfilePicture,
+    audiusLogo,
+    verifiedIcon,
+    verifiedIconWhite,
+    artistTierIcon,
+    commenterTierIcon,
+  ] = await Promise.all([
+    loadImage(c, track.artwork["150x150"]),
+    loadImage(c, user.profile_picture["150x150"]),
+    loadImage(c, ICON_PATHS.AUDIUS_LOGO),
+    isCommenterVerified ? loadImage(c, ICON_PATHS.VERIFIED) : null,
+    isArtistVerified ? loadImage(c, ICON_PATHS.VERIFIED_WHITE) : null,
+    artistTier ? loadImage(c, getBadgeIconPath(artistTier)!) : null,
+    commenterTier ? loadImage(c, getBadgeIconPath(commenterTier)!) : null,
+  ]);
+
+  const renderContent = () => (
+    <BaseLayout>
+      <div
+        style={{
+          display: "flex",
+          gap: "40px",
+          padding: "40px",
+          justifyContent: "space-between",
+          background: "linear-gradient(-22deg, #5b23e1 0%, #a22feb 100%)",
+          boxSizing: "border-box",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flex: "1 1 0",
+            flexDirection: "row",
+            gap: "24px",
+            alignItems: "center",
+          }}
+        >
+          {trackArtwork && (
+            <img
+              src={trackArtwork}
+              alt="Track Artwork"
+              height={120}
+              width={120}
+              style={{ width: "120px", height: "120px", borderRadius: "10px" }}
+            />
+          )}
+          <div
+            style={{
+              display: "flex",
+              flex: "1 1 0",
+              flexDirection: "column",
+              gap: "4px",
+              height: "120px",
+              paddingTop: "4px",
+              alignSelf: "center",
+            }}
+          >
+            <h2
+              style={{
+                margin: 0,
+                color: "#FFF",
+                fontSize: "48px",
+                fontWeight: "800",
+                lineHeight: "54px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {trackName}
+            </h2>
+
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px" }}>
+              <p
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  margin: 0,
+                  color: "#FFF",
+                  fontSize: "40px",
+                  fontWeight: "300",
+                  lineHeight: "48px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                By {artistName}
+              </p>
+              <UserBadge
+                isVerified={isArtistVerified}
+                tier={artistTier}
+                size={32}
+                verifiedIconWhite={verifiedIconWhite || undefined}
+                tierIcon={artistTierIcon || undefined}
+              />
+            </div>
+          </div>
+        </div>
+        <div style={{ display: "flex", alignSelf: "flex-start", width: "200px" }}>
+          {audiusLogo && <img src={audiusLogo} alt="Audius Logo" height={48} width={200} style={{ width: "200px" }} />}
+        </div>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          width: "100%",
+          padding: "40px",
+          justifyContent: "center",
+          boxSizing: "border-box",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            gap: "32px",
+            alignContent: "center",
+          }}
+        >
+          <div style={{ display: "flex", alignSelf: "flex-start", flexBasis: "128px" }}>
+            {userProfilePicture && (
+              <img
+                src={userProfilePicture}
+                alt="Profile Picture"
+                height={128}
+                width={128}
+                style={{ width: "128px", height: "128px", borderRadius: "50%" }}
+              />
+            )}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: "1 1 0",
+              gap: "16px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <h2
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  margin: 0,
+                  color: "#524F62",
+                  fontSize: "60px",
+                  fontStyle: "normal",
+                  fontWeight: "700",
+                  lineHeight: "64px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {commenterName}
+              </h2>
+              <UserBadge
+                isVerified={isCommenterVerified}
+                tier={commenterTier}
+                size={52}
+                verifiedIcon={verifiedIcon || undefined}
+                tierIcon={commenterTierIcon || undefined}
+              />
+            </div>
+            <p
+              style={{
+                margin: 0,
+                color: "#524F62",
+                fontSize: "48px",
+                fontStyle: "normal",
+                fontWeight: "500",
+                lineHeight: "72px",
+                position: "relative",
+              }}
+            >
+              {commentText}
+              {/* Element to fade out text after 4 lines */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: "360px",
+                  background:
+                    "linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 1) 75%, rgba(255, 255, 255, 1) 100%)",
+                }}
+              />
+            </p>
+          </div>
+        </div>
+      </div>
+    </BaseLayout>
+  );
+
+  const font = await getLocalFonts(c, [
+    { path: "Inter-Bold.ttf", weight: 700 },
+    { path: "Inter-Regular.ttf", weight: 500 },
+    { path: "Inter-Light.ttf", weight: 300 },
+  ]);
+
+  return new ImageResponse(renderContent(), {
+    width: 1200,
+    height: 630,
+    fonts: Array.isArray(font) ? [...font] : [font],
+  });
+}

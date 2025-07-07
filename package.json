@@ -7,7 +7,9 @@
     "dev": "wrangler dev src/index.ts",
     "dev:staging": "wrangler dev src/index.ts --config wrangler.staging.toml",
     "deploy": "wrangler deploy --minify src/index.ts",
-    "deploy:staging": "wrangler deploy --minify src/index.ts --config wrangler.staging.toml"
+    "deploy:staging": "wrangler deploy --minify src/index.ts --config wrangler.staging.toml",
+    "format": "prettier --write src/**/*.{ts,tsx}",
+    "format:check": "prettier --check src/**/*.{ts,tsx}"
   },
   "dependencies": {
     "@cloudflare/pages-plugin-vercel-og": "^0.1.2",
@@ -20,10 +22,11 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241112.0",
-    "wrangler": "^3.88.0",
     "@types/bun": "latest",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "@vercel/og": "^1.0.0"
+    "@vercel/og": "^1.0.0",
+    "prettier": "^3.6.2",
+    "wrangler": "^3.88.0"
   }
 }
