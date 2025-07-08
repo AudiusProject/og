@@ -2,6 +2,11 @@ import { Context } from "hono";
 
 export async function loadImage(c: Context, imagePath: string): Promise<string | null> {
   try {
+    // If it's already a data URL, return it as is
+    if (imagePath.startsWith("data:")) {
+      return imagePath;
+    }
+
     if (!c.env?.ASSETS) {
       throw new Error("ASSETS binding is not configured");
     }
