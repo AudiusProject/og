@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.js
+*.d.ts
+public/
+wrangler.toml
+wrangler.staging.toml
+bun.lockb
+package-lock.json 
