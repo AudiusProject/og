@@ -6,23 +6,20 @@ This document outlines the productionalized architecture for the OG Image Genera
 
 ```
 src/
-├── airdrop.tsx          # Airdrop feature (route + renderer)
-├── comment.tsx          # Comment feature (route + renderer)
-├── template.tsx         # Template for new features
+├── routes/              # Route handlers
+│   ├── airdrop.tsx      # Airdrop feature (route + renderer + types + constants)
+│   ├── comment.tsx      # Comment feature (route + renderer + types + constants)
+│   └── template.tsx     # Template for new features
 ├── shared/              # Shared resources
 │   ├── components/      # Reusable React components
 │   │   ├── BaseLayout.tsx
 │   │   └── UserBadge.tsx
-│   ├── services/        # Business logic and API calls
+│   ├── services/        # Shared API utilities
 │   │   └── api.ts
-│   ├── utils/           # Utility functions
-│   │   ├── badge.ts
-│   │   ├── getFonts.ts
-│   │   └── loadImage.ts
-│   ├── types/           # TypeScript type definitions
-│   │   └── index.ts
-│   └── config/          # Configuration and constants
-│       └── constants.ts
+│   └── utils/           # Utility functions
+│       ├── badge.ts
+│       ├── getFonts.ts
+│       └── loadImage.ts
 └── index.ts            # Main application entry point
 ```
 
@@ -118,9 +115,9 @@ export class APIService {
 
 To add a new OG image type (e.g., `track`):
 
-1. **Copy the template** and create `src/track.tsx`:
+1. **Copy the template** and create `src/routes/track.tsx`:
    ```bash
-   cp src/template.tsx src/track.tsx
+   cp src/routes/template.tsx src/routes/track.tsx
    ```
 
 3. **Update the feature** with your content type:
@@ -146,21 +143,7 @@ To add a new OG image type (e.g., `track`):
    }
    ```
 
-4. **Add API method** in `src/shared/services/api.ts`:
-   ```typescript
-   async getTrackDataById(id: string): Promise<any> {
-     const url = `${this.baseUrl}/v1/full/tracks/${id}`;
-     const res = await fetch(url);
-     const response = await res.json() as { data: any; related: any };
-     const { data, related } = response;
-     
-     if (!data) throw new Error(`Failed to get track ${id}`);
-     
-     return { data, related };
-   }
-   ```
-
-5. **Add the route** in `src/index.ts`:
+4. **Add the route** in `src/index.ts`:
    ```typescript
    import { trackRoute } from './track';
    
@@ -171,14 +154,20 @@ To add a new OG image type (e.g., `track`):
      .route('/track', trackRoute); // Add this line
    ```
 
-6. **Add types** in `src/shared/types/index.ts` if needed:
+5. **Types and constants** are defined directly in your feature file:
    ```typescript
-   export interface TrackData {
+   // Feature-specific types
+   interface TrackData {
      // Type definition
    }
+   
+   // Feature-specific constants
+   const ICON_PATHS = {
+     // Your constants
+   } as const;
    ```
 
-See `src/template.tsx` for a complete example of the feature structure.
+See `src/routes/template.tsx` for a complete example of the feature structure.
 
 ## Code Style Guidelines
 
@@ -187,7 +176,7 @@ See `src/template.tsx` for a complete example of the feature structure.
 - **Imports**: Group imports by type (React, external, internal)
 - **Error Handling**: Always wrap renderers in try-catch blocks
 - **Type Safety**: Use proper TypeScript types, avoid `any` when possible
-- **Constants**: Use centralized constants from `config/constants.ts`
+- **Constants**: Define feature-specific constants in each feature file
 
 ## Testing New Renderers
 

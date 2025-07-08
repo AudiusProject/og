@@ -1,10 +1,28 @@
 import { Hono } from "hono";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
-import { BaseLayout } from "./shared/components/BaseLayout";
-import { APIService } from "./shared/services/api";
-import { getLocalFonts } from "./shared/utils/getFonts";
-import { loadImage } from "./shared/utils/loadImage";
-import { IMAGE_PATHS } from "./shared/config/constants";
+import { BaseLayout } from "../shared/components/BaseLayout";
+import { APIService } from "../shared/services/api";
+import { getLocalFonts } from "../shared/utils/getFonts";
+import { loadImage } from "../shared/utils/loadImage";
+
+// Feature-specific types
+interface UserData {
+  data?: {
+    id: string;
+  };
+}
+
+interface Challenge {
+  challenge_id: string;
+  current_step_count: number;
+}
+
+interface ChallengeData {
+  data?: Challenge[];
+}
+
+// Feature-specific constants
+const AIRDROP_BACKGROUND = "/images/airdrop.png";
 
 // Route definition
 export const airdropRoute = new Hono().get("/:handle?", async (c) => {
@@ -27,7 +45,7 @@ async function renderAirdropOGImage(c: any, handle?: string) {
     totalAllocation !== null ? `${Number(totalAllocation).toLocaleString()} $AUDIO` : "Airdrop 2: Artist Appreciation";
 
   const font = await getLocalFonts(c, [{ path: "Inter-Bold.ttf", weight: 700 }]);
-  const backgroundImage = await loadImage(c, IMAGE_PATHS.AIRDROP_BACKGROUND);
+  const backgroundImage = await loadImage(c, AIRDROP_BACKGROUND);
 
   const renderContent = () => (
     <BaseLayout backgroundImage={backgroundImage || undefined}>

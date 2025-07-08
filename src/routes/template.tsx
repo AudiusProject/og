@@ -1,12 +1,36 @@
 import { Hono } from "hono";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
-import { BaseLayout } from "./shared/components/BaseLayout";
-import { UserBadge } from "./shared/components/UserBadge";
-import { APIService } from "./shared/services/api";
-import { getBadgeTier, getBadgeIconPath } from "./shared/utils/badge";
-import { getLocalFonts } from "./shared/utils/getFonts";
-import { loadImage } from "./shared/utils/loadImage";
-import { ICON_PATHS } from "./shared/config/constants";
+import { BaseLayout } from "../shared/components/BaseLayout";
+import { UserBadge } from "../shared/components/UserBadge";
+import { APIService } from "../shared/services/api";
+import { getBadgeTier, getBadgeIconPath } from "../shared/utils/badge";
+import { getLocalFonts } from "../shared/utils/getFonts";
+import { loadImage } from "../shared/utils/loadImage";
+// Feature-specific types
+interface UserInfo {
+  id: string;
+  name: string;
+  is_verified: boolean;
+  total_audio_balance: number;
+  profile_picture: Record<string, string>;
+}
+
+interface ItemData {
+  id: string;
+  title: string;
+  artwork: Record<string, string>;
+  user: UserInfo;
+}
+
+// Feature-specific constants
+const ICON_PATHS = {
+  AUDIUS_LOGO: "/icons/AudiusLogoHorizontal.svg",
+  VERIFIED_WHITE: "/icons/VerifiedWhite.svg",
+} as const;
+
+const STYLES = {
+  GRADIENT_BACKGROUND: "linear-gradient(-22deg, #5b23e1 0%, #a22feb 100%)",
+} as const;
 
 // Route definition
 export const templateRoute = new Hono().get("/:id", async (c) => {
@@ -26,8 +50,8 @@ export const templateRoute = new Hono().get("/:id", async (c) => {
 async function renderTemplateOGImage(c: any, id: string) {
   const apiService = new APIService(c);
 
-  // TODO: Replace with actual API method when implementing
-  // const { data: item, related } = await apiService.getTemplateDataById(id);
+  // TODO: Replace with actual API call when implementing
+  // const { data: item, related } = await apiService.fetch<{ data: any; related: any }>(`/v1/full/[type]s/${id}`);
   const item = {
     title: "Example Title",
     user: { name: "Example Artist", is_verified: false, total_audio_balance: 0 },

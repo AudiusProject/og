@@ -67,12 +67,11 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation.
 
 To add a new OG image type:
 
-1. Create `src/[feature-name].tsx` with route + renderer
-3. Add API method in `src/shared/services/api.ts`
-4. Add types if needed in `src/shared/types/index.ts`
+1. Create `src/routes/[feature-name].tsx` with route + renderer
+3. Add types and constants directly in your feature file
 5. Add route in `src/index.ts` using `.route('/[feature-name]', [featureName]Route)`
 
-See `src/template.tsx` for a complete example.
+See `src/routes/template.tsx` for a complete example.
 
 ## Tech Stack
 

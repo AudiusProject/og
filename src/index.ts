@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
-import { airdropRoute } from "./airdrop";
-import { commentRoute } from "./comment";
+import { airdropRoute } from "./routes/airdrop";
+import { commentRoute } from "./routes/comment";
 
 const app = new Hono()
   .use("*", logger())

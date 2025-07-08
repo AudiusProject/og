@@ -1,4 +1,4 @@
-import { BadgeTier } from "../types";
+import { BadgeTier } from "../utils/badge";
 
 interface UserBadgeProps {
   isVerified: boolean;

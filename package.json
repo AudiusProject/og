@@ -9,7 +9,8 @@
     "deploy": "wrangler deploy --minify src/index.ts",
     "deploy:staging": "wrangler deploy --minify src/index.ts --config wrangler.staging.toml",
     "format": "prettier --write src/**/*.{ts,tsx}",
-    "format:check": "prettier --check src/**/*.{ts,tsx}"
+    "format:check": "prettier --check src/**/*.{ts,tsx}",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@cloudflare/pages-plugin-vercel-og": "^0.1.2",

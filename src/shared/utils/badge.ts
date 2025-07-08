@@ -1,5 +1,19 @@
-import { BadgeTier } from "../types";
-import { BADGE_TIERS, ICON_PATHS } from "../config/constants";
+// Badge-related types and constants
+export type BadgeTier = "Bronze" | "Silver" | "Gold" | "Platinum" | null;
+
+const BADGE_TIERS = {
+  PLATINUM: { min: 10000, name: "Platinum" },
+  GOLD: { min: 1000, name: "Gold" },
+  SILVER: { min: 100, name: "Silver" },
+  BRONZE: { min: 10, name: "Bronze" },
+} as const;
+
+const ICON_PATHS = {
+  TOKEN_BRONZE: "/icons/TokenBronze.svg",
+  TOKEN_SILVER: "/icons/TokenSilver.svg",
+  TOKEN_GOLD: "/icons/TokenGold.svg",
+  TOKEN_PLATINUM: "/icons/TokenPlatinum.svg",
+} as const;
 
 export const getBadgeTier = (balance: number): BadgeTier => {
   if (balance >= BADGE_TIERS.PLATINUM.min) {

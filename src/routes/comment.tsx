@@ -1,12 +1,44 @@
 import { Hono } from "hono";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
-import { BaseLayout } from "./shared/components/BaseLayout";
-import { UserBadge } from "./shared/components/UserBadge";
-import { APIService } from "./shared/services/api";
-import { getBadgeTier, getBadgeIconPath } from "./shared/utils/badge";
-import { getLocalFonts } from "./shared/utils/getFonts";
-import { loadImage } from "./shared/utils/loadImage";
-import { ICON_PATHS } from "./shared/config/constants";
+import { BaseLayout } from "../shared/components/BaseLayout";
+import { UserBadge } from "../shared/components/UserBadge";
+import { APIService } from "../shared/services/api";
+import { getBadgeTier, getBadgeIconPath } from "../shared/utils/badge";
+import { getLocalFonts } from "../shared/utils/getFonts";
+import { loadImage } from "../shared/utils/loadImage";
+// Feature-specific types
+interface UserInfo {
+  id: string;
+  name: string;
+  is_verified: boolean;
+  total_audio_balance: number;
+  profile_picture: Record<string, string>;
+}
+
+interface TrackData {
+  id: string;
+  title: string;
+  artwork: Record<string, string>;
+  user: UserInfo;
+}
+
+// Feature-specific constants
+const ICON_PATHS = {
+  AUDIUS_LOGO: "/icons/AudiusLogoHorizontal.svg",
+  VERIFIED: "/icons/Verified.svg",
+  VERIFIED_WHITE: "/icons/VerifiedWhite.svg",
+} as const;
+
+const STYLES = {
+  GRADIENT_BACKGROUND: "linear-gradient(-22deg, #5b23e1 0%, #a22feb 100%)",
+  TEXT_FADE_GRADIENT:
+    "linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 1) 75%, rgba(255, 255, 255, 1) 100%)",
+} as const;
+
+const COLORS = {
+  WHITE: "#FFF",
+  TEXT_PRIMARY: "#524F62",
+} as const;
 
 // Route definition
 export const commentRoute = new Hono().get("/:id", async (c) => {
@@ -25,7 +57,20 @@ export const commentRoute = new Hono().get("/:id", async (c) => {
 // Render function
 async function renderCommentOGImage(c: any, commentId: string) {
   const apiService = new APIService(c);
-  const { comment, track, user } = await apiService.getCommentDataById(commentId);
+
+  // Feature-specific API call
+  const { data, related } = await apiService.fetch<{ data: any; related: { tracks: TrackData[]; users: UserInfo[] } }>(
+    `/v1/full/comments/${commentId}`,
+  );
+  const comment = Array.isArray(data) ? data[0] : data;
+
+  if (!comment) throw new Error(`Failed to get comment ${commentId}`);
+
+  const track = related.tracks.find((t: TrackData) => t.id === comment.entity_id);
+  const user = related.users.find((u: UserInfo) => u.id === comment.user_id);
+
+  if (!track) throw new Error(`Track not found for comment ${commentId}`);
+  if (!user) throw new Error(`User not found for comment ${commentId}`);
 
   const trackName = track.title;
   const artistName = track.user.name;
@@ -63,7 +108,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
           gap: "40px",
           padding: "40px",
           justifyContent: "space-between",
-          background: "linear-gradient(-22deg, #5b23e1 0%, #a22feb 100%)",
+          background: STYLES.GRADIENT_BACKGROUND,
           boxSizing: "border-box",
         }}
       >
@@ -99,7 +144,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
             <h2
               style={{
                 margin: 0,
-                color: "#FFF",
+                color: COLORS.WHITE,
                 fontSize: "48px",
                 fontWeight: "800",
                 lineHeight: "54px",
@@ -118,7 +163,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
                   alignItems: "center",
                   gap: "8px",
                   margin: 0,
-                  color: "#FFF",
+                  color: COLORS.WHITE,
                   fontSize: "40px",
                   fontWeight: "300",
                   lineHeight: "48px",
@@ -187,7 +232,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
                   alignItems: "center",
                   gap: "8px",
                   margin: 0,
-                  color: "#524F62",
+                  color: COLORS.TEXT_PRIMARY,
                   fontSize: "60px",
                   fontStyle: "normal",
                   fontWeight: "700",
@@ -210,7 +255,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
             <p
               style={{
                 margin: 0,
-                color: "#524F62",
+                color: COLORS.TEXT_PRIMARY,
                 fontSize: "48px",
                 fontStyle: "normal",
                 fontWeight: "500",
@@ -227,8 +272,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
                   left: 0,
                   right: 0,
                   height: "360px",
-                  background:
-                    "linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 1) 75%, rgba(255, 255, 255, 1) 100%)",
+                  background: STYLES.TEXT_FADE_GRADIENT,
                 }}
               />
             </p>
