@@ -1,11 +1,11 @@
 import { Hono } from "hono";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
-import { BaseLayout } from "../shared/components/BaseLayout";
-import { UserBadge } from "../shared/components/UserBadge";
-import { APIService } from "../shared/services/api";
-import { getBadgeTier, getBadgeIconPath } from "../shared/utils/badge";
-import { getLocalFonts } from "../shared/utils/getFonts";
-import { loadImage } from "../shared/utils/loadImage";
+import { BaseLayout } from "../components/BaseLayout";
+import { UserBadge } from "../components/UserBadge";
+import { APIService } from "../services/api";
+import { getBadgeTier, getBadgeIconPath } from "../utils/badge";
+import { getLocalFonts } from "../utils/getFonts";
+import { loadImage } from "../utils/loadImage";
 // Feature-specific types
 interface UserInfo {
   id: string;

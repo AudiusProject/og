@@ -10,16 +10,15 @@ src/
 │   ├── airdrop.tsx      # Airdrop feature (route + renderer + types + constants)
 │   ├── comment.tsx      # Comment feature (route + renderer + types + constants)
 │   └── template.tsx     # Template for new features
-├── shared/              # Shared resources
-│   ├── components/      # Reusable React components
-│   │   ├── BaseLayout.tsx
-│   │   └── UserBadge.tsx
-│   ├── services/        # Shared API utilities
-│   │   └── api.ts
-│   └── utils/           # Utility functions
-│       ├── badge.ts
-│       ├── getFonts.ts
-│       └── loadImage.ts
+├── components/          # Reusable React components
+│   ├── BaseLayout.tsx
+│   └── UserBadge.tsx
+├── services/            # Shared API utilities
+│   └── api.ts
+├── utils/               # Utility functions
+│   ├── badge.ts
+│   ├── getFonts.ts
+│   └── loadImage.ts
 └── index.ts            # Main application entry point
 ```
 

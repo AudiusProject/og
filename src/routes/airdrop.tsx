@@ -1,9 +1,9 @@
 import { Hono } from "hono";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
-import { BaseLayout } from "../shared/components/BaseLayout";
-import { APIService } from "../shared/services/api";
-import { getLocalFonts } from "../shared/utils/getFonts";
-import { loadImage } from "../shared/utils/loadImage";
+import { BaseLayout } from "../components/BaseLayout";
+import { APIService } from "../services/api";
+import { getLocalFonts } from "../utils/getFonts";
+import { loadImage } from "../utils/loadImage";
 
 // Feature-specific types
 interface UserData {
