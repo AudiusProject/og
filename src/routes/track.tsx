@@ -3,7 +3,7 @@ import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
 import { UserBadge } from "../components/UserBadge";
 import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
-import { getBadgeTier, getBadgeIconPath } from "../utils/badge";
+import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
 import { loadImage } from "../utils/loadImage";
 import { APIService } from "../services/api";
@@ -28,12 +28,6 @@ interface TrackResponse {
   data?: TrackData;
 }
 
-// Feature-specific constants
-const ICON_PATHS = {
-  AUDIUS_LOGO: "/icons/AudiusLogoHorizontal.svg",
-  VERIFIED_WHITE: "/icons/VerifiedWhite.svg",
-} as const;
-
 // Route definition
 export const trackRoute = new Hono().get("/:id", async (c) => {
   try {
@@ -46,24 +40,11 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
     if (!response.data) return c.json({ error: "Track not found" }, 404);
     const track = response.data;
 
-    // Debug logging for artwork
-    console.log("track.artwork:", track.artwork);
-
     // Prepare badge/verification
     const artistName = track.user.name;
     const isArtistVerified = track.user.is_verified;
     const artistTier = getBadgeTier(track.user.total_audio_balance);
-    // Use the external artwork URL directly
     const trackArtwork = track.artwork["1000x1000"];
-    // Only use loadImage for local assets
-    const [audiusLogo, verifiedIconWhite, artistTierIcon] = await Promise.all([
-      loadImage(c, ICON_PATHS.AUDIUS_LOGO),
-      isArtistVerified ? loadImage(c, ICON_PATHS.VERIFIED_WHITE) : null,
-      artistTier ? loadImage(c, getBadgeIconPath(artistTier)!) : null,
-    ]);
-
-    // Debug logging for loaded artwork
-    console.log("trackArtwork:", trackArtwork);
 
     // Load fonts
     const font = await getLocalFonts(c, [
@@ -191,13 +172,7 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
               <span style={{ fontWeight: 700, fontSize: "32px", color: "#fff", fontFamily: "Avenir Next LT Pro" }}>
                 {artistName}
               </span>
-              <UserBadge
-                isVerified={isArtistVerified}
-                tier={artistTier}
-                size={32}
-                verifiedIconWhite={verifiedIconWhite || undefined}
-                tierIcon={artistTierIcon || undefined}
-              />
+              <UserBadge isVerified={isArtistVerified} tier={artistTier} size={32} verifiedVariant="white" />
             </div>
 
             {/* Play Button */}

@@ -2,8 +2,9 @@ import { Hono } from "hono";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
 import { UserBadge } from "../components/UserBadge";
+import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
 import { APIService } from "../services/api";
-import { getBadgeTier, getBadgeIconPath } from "../utils/badge";
+import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
 import { loadImage } from "../utils/loadImage";
 // Feature-specific types
@@ -23,12 +24,6 @@ interface TrackData {
 }
 
 // Feature-specific constants
-const ICON_PATHS = {
-  AUDIUS_LOGO: "/icons/AudiusLogoHorizontal.svg",
-  VERIFIED: "/icons/Verified.svg",
-  VERIFIED_WHITE: "/icons/VerifiedWhite.svg",
-} as const;
-
 const STYLES = {
   GRADIENT_BACKGROUND: "linear-gradient(-22deg, #5b23e1 0%, #a22feb 100%)",
   TEXT_FADE_GRADIENT:
@@ -82,23 +77,8 @@ async function renderCommentOGImage(c: any, commentId: string) {
   const isCommenterVerified = user.is_verified;
   const commenterTier = getBadgeTier(user.total_audio_balance);
 
-  const [
-    trackArtwork,
-    userProfilePicture,
-    audiusLogo,
-    verifiedIcon,
-    verifiedIconWhite,
-    artistTierIcon,
-    commenterTierIcon,
-  ] = await Promise.all([
-    loadImage(c, track.artwork["150x150"]),
-    loadImage(c, user.profile_picture["150x150"]),
-    loadImage(c, ICON_PATHS.AUDIUS_LOGO),
-    isCommenterVerified ? loadImage(c, ICON_PATHS.VERIFIED) : null,
-    isArtistVerified ? loadImage(c, ICON_PATHS.VERIFIED_WHITE) : null,
-    artistTier ? loadImage(c, getBadgeIconPath(artistTier)!) : null,
-    commenterTier ? loadImage(c, getBadgeIconPath(commenterTier)!) : null,
-  ]);
+  const trackArtwork = track.artwork["150x150"];
+  const userProfilePicture = user.profile_picture["150x150"];
 
   const renderContent = () => (
     <BaseLayout>
@@ -174,19 +154,11 @@ async function renderCommentOGImage(c: any, commentId: string) {
               >
                 By {artistName}
               </p>
-              <UserBadge
-                isVerified={isArtistVerified}
-                tier={artistTier}
-                size={32}
-                verifiedIconWhite={verifiedIconWhite || undefined}
-                tierIcon={artistTierIcon || undefined}
-              />
+              <UserBadge isVerified={isArtistVerified} tier={artistTier} size={32} verifiedVariant="white" />
             </div>
           </div>
         </div>
-        <div style={{ display: "flex", alignSelf: "flex-start", width: "200px" }}>
-          {audiusLogo && <img src={audiusLogo} alt="Audius Logo" height={48} width={200} style={{ width: "200px" }} />}
-        </div>
+        <AudiusLogoHorizontal height={40} />
       </div>
       <div
         style={{
@@ -244,13 +216,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
               >
                 {commenterName}
               </h2>
-              <UserBadge
-                isVerified={isCommenterVerified}
-                tier={commenterTier}
-                size={52}
-                verifiedIcon={verifiedIcon || undefined}
-                tierIcon={commenterTierIcon || undefined}
-              />
+              <UserBadge isVerified={isCommenterVerified} tier={commenterTier} size={52} verifiedVariant="default" />
             </div>
             <p
               style={{
