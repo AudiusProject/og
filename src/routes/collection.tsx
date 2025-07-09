@@ -7,7 +7,6 @@ import { PlayButton } from "../components/PlayButton";
 import { ContentTag } from "../components/ContentTag";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
-import { loadImage } from "../utils/loadImage";
 import { APIService } from "../services/api";
 
 // Feature-specific types
@@ -19,34 +18,38 @@ interface UserInfo {
   profile_picture?: Record<string, string>;
 }
 
-interface TrackData {
+interface PlaylistData {
   id?: string;
-  title: string;
+  playlist_name: string;
   artwork: Record<string, string>;
   user: UserInfo;
+  is_album?: boolean;
 }
 
-interface TrackResponse {
-  data?: TrackData;
+interface PlaylistResponse {
+  data?: PlaylistData[];
 }
 
 // Route definition
-export const trackRoute = new Hono().get("/:id", async (c) => {
+export const collectionRoute = new Hono().get("/:id", async (c) => {
   try {
     const id = c.req.param("id");
-    if (!id) return c.json({ error: "Missing track ID" }, 400);
+    if (!id) return c.json({ error: "Missing playlist ID" }, 400);
 
-    // Fetch track data using APIService
+    // Fetch playlist data using APIService
     const apiService = new APIService(c);
-    const response: TrackResponse = await apiService.fetch(`/v1/full/tracks/${id}`);
-    if (!response.data) return c.json({ error: "Track not found" }, 404);
-    const track = response.data;
+    const response: PlaylistResponse = await apiService.fetch(`/v1/full/playlists/${id}`);
+    if (!response.data) return c.json({ error: "Playlist not found" }, 404);
+    const playlist = response.data[0];
 
     // Prepare badge/verification
-    const artistName = track.user.name;
-    const isArtistVerified = track.user.is_verified;
-    const artistTier = getBadgeTier(track.user.total_audio_balance);
-    const trackArtwork = track.artwork["1000x1000"];
+    const artistName = playlist.user.name;
+    const isArtistVerified = playlist.user.is_verified;
+    const artistTier = getBadgeTier(playlist.user.total_audio_balance);
+    const playlistArtwork = playlist.artwork["1000x1000"];
+
+    // Determine content type for tag
+    const contentType = playlist.is_album ? "album" : "playlist";
 
     // Load fonts
     const font = await getLocalFonts(c, [
@@ -87,9 +90,9 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
               borderRadius: "24px",
             }}
           >
-            {trackArtwork && (
+            {playlistArtwork && (
               <img
-                src={trackArtwork}
+                src={playlistArtwork}
                 alt="Artwork"
                 style={{
                   width: "100%",
@@ -116,7 +119,7 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
               background: "transparent",
             }}
           >
-            {/* Top Row: TRACK + Audius logo */}
+            {/* Top Row: COLLECTION + Audius logo */}
             <div
               style={{
                 display: "flex",
@@ -128,7 +131,7 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
                 gap: "8px",
               }}
             >
-              <ContentTag text="track" />
+              <ContentTag text={contentType} />
               <AudiusLogoHorizontal height={40} />
             </div>
 
@@ -144,7 +147,7 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
                 fontFamily: "Avenir Next LT Pro",
               }}
             >
-              {track.title}
+              {playlist.playlist_name}
             </div>
 
             {/* Artist + Badges */}
@@ -186,9 +189,9 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
       fonts: Array.isArray(font) ? [...font] : [font],
     });
   } catch (error: any) {
-    console.error("Track OG Image generation error:", error);
-    return c.json({ error: "Failed to generate track image", details: error.message }, 500);
+    console.error("Collection OG Image generation error:", error);
+    return c.json({ error: "Failed to generate collection image", details: error.message }, 500);
   }
 });
 
-export default trackRoute;
+export default collectionRoute;

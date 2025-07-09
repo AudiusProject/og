@@ -3,12 +3,14 @@ import { logger } from "hono/logger";
 import { airdropRoute } from "./routes/airdrop";
 import { commentRoute } from "./routes/comment";
 import { trackRoute } from "./routes/track";
+import { collectionRoute } from "./routes/collection";
 
 const app = new Hono()
   .use("*", logger())
   .route("/airdrop", airdropRoute)
   .route("/comment", commentRoute)
   .route("/track", trackRoute)
+  .route("/collection", collectionRoute)
   .route("/og/comment", commentRoute); // Legacy route support
 
 // Health check and info endpoint
@@ -20,10 +22,11 @@ app.get("/", async (c) => {
       airdrop: "/airdrop/:handle?",
       comment: "/comment/:id",
       track: "/track/:id",
+      collection: "/collection/:id",
       "comment (legacy)": "/og/comment/:id",
     },
-    implemented: ["airdrop", "comment", "track"],
-    comingSoon: ["user", "collection"],
+    implemented: ["airdrop", "comment", "track", "collection"],
+    comingSoon: ["user"],
   });
 });
 
