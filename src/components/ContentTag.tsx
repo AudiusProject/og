@@ -3,9 +3,10 @@ import React from "react";
 interface ContentTagProps {
   text: string;
   size?: "small" | "medium" | "large";
+  variant?: "light" | "dark";
 }
 
-export const ContentTag = ({ text, size = "medium" }: ContentTagProps) => {
+export const ContentTag = ({ text, size = "medium", variant = "light" }: ContentTagProps) => {
   const sizeStyles = {
     small: {
       fontSize: "16px",
@@ -26,17 +27,20 @@ export const ContentTag = ({ text, size = "medium" }: ContentTagProps) => {
 
   const style = sizeStyles[size];
 
+  const background = variant === "dark" ? "#A3A0B4" : "#fff";
+  const color = variant === "dark" ? "#fff" : "#000";
+
   return (
     <div
       style={{
-        background: "#fff",
-        borderRadius: "4px",
+        background,
+        borderRadius: "8px",
         padding: style.padding,
         fontWeight: 800,
         fontSize: style.fontSize,
         letterSpacing: style.letterSpacing,
         textTransform: "uppercase",
-        color: "#000",
+        color,
         fontFamily: "Avenir Next LT Pro",
       }}
     >
