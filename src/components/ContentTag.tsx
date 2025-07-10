@@ -7,26 +7,7 @@ interface ContentTagProps {
   color?: string;
 }
 
-export const ContentTag = ({ text, size = "medium", variant = "light", color: colorProp }: ContentTagProps) => {
-  const sizeStyles = {
-    small: {
-      fontSize: "16px",
-      padding: "6px",
-      letterSpacing: "2px",
-    },
-    medium: {
-      fontSize: "22px",
-      padding: "8px",
-      letterSpacing: "4px",
-    },
-    large: {
-      fontSize: "28px",
-      padding: "10px",
-      letterSpacing: "6px",
-    },
-  };
-
-  const style = sizeStyles[size];
+export const ContentTag = ({ text, variant = "light", color: colorProp }: ContentTagProps) => {
   const background = variant === "dark" ? "#A3A0B4" : "#fff";
   const color = colorProp || (variant === "dark" ? "#fff" : "#000");
 
@@ -35,10 +16,10 @@ export const ContentTag = ({ text, size = "medium", variant = "light", color: co
       style={{
         background,
         borderRadius: "8px",
-        padding: style.padding,
         fontWeight: 800,
-        fontSize: style.fontSize,
-        letterSpacing: style.letterSpacing,
+        fontSize: "22px",
+        padding: "8px",
+        letterSpacing: "4px",
         textTransform: "uppercase",
         color,
         fontFamily: "Avenir Next LT Pro",

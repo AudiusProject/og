@@ -151,8 +151,10 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
                   fontSize: "40px",
                   lineHeight: "49px",
                   color: "#fff",
-                  marginTop: "24px",
                   fontFamily: "Avenir Next LT Pro",
+                  overflow: "hidden",
+                  maxHeight: "147px", // 3 * 49px lineHeight
+                  // No ellipsis, just cut off after 3 lines
                 }}
               >
                 {playlist.playlist_name}
@@ -166,7 +168,17 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
                   height: "39px",
                 }}
               >
-                <span style={{ fontWeight: 700, fontSize: "32px", color: "#fff", fontFamily: "Avenir Next LT Pro" }}>
+                <span
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "32px",
+                    color: "#fff",
+                    fontFamily: "Avenir Next LT Pro",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {artistName}
                 </span>
                 <UserBadge isVerified={isArtistVerified} tier={artistTier} size={32} verifiedVariant="white" />

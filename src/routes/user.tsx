@@ -141,14 +141,13 @@ export const userRoute = new Hono().get("/:id", async (c) => {
                 padding: "0px",
                 gap: "16px",
                 width: "696px",
-                height: "231px",
               }}
             >
               {/* Profile Tag */}
               {user.profile_type === "label" ? (
-                <ContentTag text="label" size="medium" variant="dark" />
+                <ContentTag text="label" variant="dark" />
               ) : typeof user.track_count === "number" && user.track_count > 0 ? (
-                <ContentTag text="artist" size="medium" variant="dark" />
+                <ContentTag text="artist" variant="dark" />
               ) : null}
 
               {/* Name and Badges */}
@@ -159,8 +158,7 @@ export const userRoute = new Hono().get("/:id", async (c) => {
                   alignItems: "flex-start",
                   padding: "0px",
                   gap: "8px",
-                  width: "490px",
-                  // height: "121px", // Remove fixed height for flexibility
+                  width: "100%",
                 }}
               >
                 {/* Name Row */}
@@ -169,8 +167,8 @@ export const userRoute = new Hono().get("/:id", async (c) => {
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
-                    padding: "0px",
                     gap: "8px",
+                    width: "100%",
                   }}
                 >
                   <span
@@ -181,6 +179,8 @@ export const userRoute = new Hono().get("/:id", async (c) => {
                       fontSize: "44px",
                       lineHeight: "52px",
                       color: "#524F62",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
                     }}
                   >
                     {userName}
@@ -188,18 +188,32 @@ export const userRoute = new Hono().get("/:id", async (c) => {
                   <UserBadge isVerified={isUserVerified} tier={userTier} size={40} verifiedVariant="default" />
                 </div>
                 {/* Handle Row */}
-                <span
+                <div
                   style={{
-                    fontFamily: "Avenir Next LT Pro",
-                    fontStyle: "normal",
-                    fontWeight: 700,
-                    fontSize: "28px",
-                    lineHeight: "36px",
-                    color: "#736E88",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    width: "100%",
                   }}
                 >
-                  @{userHandle}
-                </span>
+                  <span
+                    style={{
+                      fontFamily: "Avenir Next LT Pro",
+                      fontStyle: "normal",
+                      fontWeight: 700,
+                      fontSize: "28px",
+                      lineHeight: "36px",
+                      color: "#736E88",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      flex: 1,
+                      minWidth: 0,
+                    }}
+                  >
+                    @{userHandle}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -211,10 +225,12 @@ export const userRoute = new Hono().get("/:id", async (c) => {
               flexDirection: "column",
               justifyContent: "flex-end",
               alignItems: "flex-end",
-              padding: "24px",
+              height: "48px",
             }}
           >
-            <AudiusLogoHorizontal height={40} variant="dark" />
+            <div style={{ display: "flex", position: "absolute", bottom: "24px", right: "24px" }}>
+              <AudiusLogoHorizontal height={40} variant="dark" />
+            </div>
           </div>
         </div>
       </BaseLayout>
