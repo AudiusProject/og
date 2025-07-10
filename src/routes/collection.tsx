@@ -9,6 +9,7 @@ import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
 import { APIService } from "../services/api";
 import { getDominantColor } from "../utils/getDominantColor";
+import { blendWithWhite } from "../utils/blendWithWhite";
 
 // Feature-specific types
 interface UserInfo {
@@ -91,6 +92,9 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
                 "0px 100px 80px rgba(0,0,0,0.07), 0px 41.78px 33.42px rgba(0,0,0,0.05), 0px 22.34px 17.87px rgba(0,0,0,0.04), 0px 12.52px 10.02px rgba(0,0,0,0.035), 0px 6.65px 5.32px rgba(0,0,0,0.028), 0px 2.77px 2.21px rgba(0,0,0,0.02)",
               position: "relative",
               overflow: "hidden",
+              border: dominantColor
+                ? `2px solid ${blendWithWhite(dominantColor.replace("#", ""), 0.1)}`
+                : "2px solid #FFF",
               borderRadius: "24px",
             }}
           >
@@ -102,7 +106,6 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
                   width: "100%",
                   height: "100%",
                   objectFit: "contain",
-                  borderRadius: "24px",
                 }}
               />
             )}
@@ -113,7 +116,7 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
             style={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "flex-start",
+              justifyContent: "center",
               alignItems: "flex-start",
               padding: "32px",
               gap: "56px",
@@ -139,35 +142,35 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
               <AudiusLogoHorizontal height={40} />
             </div>
 
-            {/* Title */}
-            <div
-              style={{
-                width: "490px",
-                fontWeight: 800,
-                fontSize: "40px",
-                lineHeight: "49px",
-                color: "#fff",
-                marginTop: "24px",
-                fontFamily: "Avenir Next LT Pro",
-              }}
-            >
-              {playlist.playlist_name}
-            </div>
-
-            {/* Artist + Badges */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: "8px",
-                height: "39px",
-              }}
-            >
-              <span style={{ fontWeight: 700, fontSize: "32px", color: "#fff", fontFamily: "Avenir Next LT Pro" }}>
-                {artistName}
-              </span>
-              <UserBadge isVerified={isArtistVerified} tier={artistTier} size={32} verifiedVariant="white" />
+            {/* Title & Artist Grouped with 24px gap */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "24px", width: "490px" }}>
+              <div
+                style={{
+                  width: "490px",
+                  fontWeight: 800,
+                  fontSize: "40px",
+                  lineHeight: "49px",
+                  color: "#fff",
+                  marginTop: "24px",
+                  fontFamily: "Avenir Next LT Pro",
+                }}
+              >
+                {playlist.playlist_name}
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "8px",
+                  height: "39px",
+                }}
+              >
+                <span style={{ fontWeight: 700, fontSize: "32px", color: "#fff", fontFamily: "Avenir Next LT Pro" }}>
+                  {artistName}
+                </span>
+                <UserBadge isVerified={isArtistVerified} tier={artistTier} size={32} verifiedVariant="white" />
+              </div>
             </div>
 
             {/* Play Button */}
