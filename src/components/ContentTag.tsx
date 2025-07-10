@@ -4,9 +4,10 @@ interface ContentTagProps {
   text: string;
   size?: "small" | "medium" | "large";
   variant?: "light" | "dark";
+  color?: string;
 }
 
-export const ContentTag = ({ text, size = "medium", variant = "light" }: ContentTagProps) => {
+export const ContentTag = ({ text, size = "medium", variant = "light", color: colorProp }: ContentTagProps) => {
   const sizeStyles = {
     small: {
       fontSize: "16px",
@@ -26,9 +27,8 @@ export const ContentTag = ({ text, size = "medium", variant = "light" }: Content
   };
 
   const style = sizeStyles[size];
-
   const background = variant === "dark" ? "#A3A0B4" : "#fff";
-  const color = variant === "dark" ? "#fff" : "#000";
+  const color = colorProp || (variant === "dark" ? "#fff" : "#000");
 
   return (
     <div

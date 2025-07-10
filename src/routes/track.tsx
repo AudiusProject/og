@@ -9,6 +9,7 @@ import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
 import { loadImage } from "../utils/loadImage";
 import { APIService } from "../services/api";
+import { getDominantColor } from "../utils/getDominantColor";
 
 // Feature-specific types
 interface UserInfo {
@@ -48,6 +49,9 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
     const artistTier = getBadgeTier(track.user.total_audio_balance);
     const trackArtwork = track.artwork["1000x1000"];
 
+    // Get dominant color from artwork
+    const dominantColor = trackArtwork ? await getDominantColor(trackArtwork) : undefined;
+
     // Load fonts
     const font = await getLocalFonts(c, [
       { path: "Inter-Bold.ttf", weight: 700 },
@@ -68,7 +72,7 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
             width: "1200px",
             height: "630px",
             boxSizing: "border-box",
-            background: "#000",
+            background: dominantColor || "#000",
           }}
         >
           {/* Artwork */}
@@ -128,7 +132,7 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
                 gap: "8px",
               }}
             >
-              <ContentTag text="track" />
+              <ContentTag text="track" color={dominantColor} />
               <AudiusLogoHorizontal height={40} />
             </div>
 
