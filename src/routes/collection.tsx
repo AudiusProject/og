@@ -8,6 +8,7 @@ import { ContentTag } from "../components/ContentTag";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
 import { APIService } from "../services/api";
+import { getDominantColor } from "../utils/getDominantColor";
 
 // Feature-specific types
 interface UserInfo {
@@ -48,6 +49,9 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
     const artistTier = getBadgeTier(playlist.user.total_audio_balance);
     const playlistArtwork = playlist.artwork["1000x1000"];
 
+    // Get dominant color from artwork
+    const dominantColor = playlistArtwork ? await getDominantColor(playlistArtwork) : undefined;
+
     // Determine content type for tag
     const contentType = playlist.is_album ? "album" : "playlist";
 
@@ -71,7 +75,7 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
             width: "1200px",
             height: "630px",
             boxSizing: "border-box",
-            background: "#000",
+            background: dominantColor || "#000",
           }}
         >
           {/* Artwork */}
@@ -131,7 +135,7 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
                 gap: "8px",
               }}
             >
-              <ContentTag text={contentType} />
+              <ContentTag text={contentType} color={dominantColor} />
               <AudiusLogoHorizontal height={40} />
             </div>
 
