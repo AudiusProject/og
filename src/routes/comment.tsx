@@ -6,7 +6,8 @@ import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
 import { APIService } from "../services/api";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
-import { loadImage } from "../utils/loadImage";
+import { getDominantColor } from "../utils/getDominantColor";
+
 // Feature-specific types
 interface UserInfo {
   id: string;
@@ -80,6 +81,8 @@ async function renderCommentOGImage(c: any, commentId: string) {
   const trackArtwork = track.artwork["150x150"];
   const userProfilePicture = user.profile_picture["150x150"];
 
+  const dominantColor = trackArtwork ? await getDominantColor(trackArtwork) : undefined;
+
   const renderContent = () => (
     <BaseLayout>
       <div
@@ -88,7 +91,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
           gap: "40px",
           padding: "40px",
           justifyContent: "space-between",
-          background: STYLES.GRADIENT_BACKGROUND,
+          background: dominantColor ?? STYLES.GRADIENT_BACKGROUND,
           boxSizing: "border-box",
         }}
       >
