@@ -64,8 +64,8 @@ export const userRoute = new Hono().get("/:id", async (c) => {
             background: "#FFFFFF",
           }}
         >
-          {/* Cover Photo */}
-          {coverPhoto && (
+          {/* Cover Photo or Blurred Profile Background */}
+          {coverPhoto ? (
             <img
               src={coverPhoto}
               alt="Cover Photo"
@@ -77,7 +77,21 @@ export const userRoute = new Hono().get("/:id", async (c) => {
                 objectFit: "cover",
               }}
             />
-          )}
+          ) : profilePicture ? (
+            <img
+              src={profilePicture}
+              alt="Profile Background"
+              width={1200}
+              height={295}
+              style={{
+                width: "1200px",
+                height: "295px",
+                objectFit: "cover",
+                filter: "blur(25px)",
+                transform: "scale(1.1)",
+              }}
+            />
+          ) : null}
 
           {/* Main Content */}
           <div

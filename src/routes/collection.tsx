@@ -119,9 +119,6 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
               justifyContent: "center",
               alignItems: "flex-start",
               padding: "32px",
-              gap: "56px",
-              width: "554px",
-              height: "598px",
               filter: "drop-shadow(0px 4px 4px rgba(0,0,0,0.1))",
               background: "transparent",
             }}
@@ -135,7 +132,7 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
                 alignItems: "center",
                 width: "490px",
                 height: "40px",
-                gap: "8px",
+                marginBottom: "56px",
               }}
             >
               <ContentTag text={contentType} color={dominantColor} />
@@ -143,7 +140,15 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
             </div>
 
             {/* Title & Artist Grouped with 24px gap */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "24px", width: "490px" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                width: "490px",
+                marginBottom: "56px",
+              }}
+            >
               <div
                 style={{
                   width: "490px",
@@ -153,6 +158,8 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
                   color: "#fff",
                   fontFamily: "Avenir Next LT Pro",
                   overflow: "hidden",
+                  // gap on the parent doesn't work as expected
+                  marginBottom: "24px",
                   maxHeight: "147px", // 3 * 49px lineHeight
                   // No ellipsis, just cut off after 3 lines
                 }}
@@ -165,7 +172,7 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
                   flexDirection: "row",
                   alignItems: "center",
                   gap: "8px",
-                  height: "39px",
+                  width: "490px",
                 }}
               >
                 <span
@@ -176,7 +183,6 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
                     fontFamily: "Avenir Next LT Pro",
                     whiteSpace: "nowrap",
                     overflow: "hidden",
-                    textOverflow: "ellipsis",
                   }}
                 >
                   {artistName}
@@ -186,17 +192,7 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
             </div>
 
             {/* Play Button */}
-            <div
-              style={{
-                width: "140px",
-                height: "140px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <PlayButton size={140} />
-            </div>
+            <PlayButton size={140} />
           </div>
         </div>
       </BaseLayout>
