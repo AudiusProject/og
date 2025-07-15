@@ -2,9 +2,10 @@ import React from "react";
 
 interface VerifiedIconProps extends React.SVGProps<SVGSVGElement> {
   variant?: "default" | "white";
+  backgroundColor?: string;
 }
 
-export const VerifiedIcon = ({ variant = "default", ...props }: VerifiedIconProps) => {
+export const VerifiedIcon = ({ variant = "default", backgroundColor, ...props }: VerifiedIconProps) => {
   if (variant === "white") {
     return (
       <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -18,7 +19,7 @@ export const VerifiedIcon = ({ variant = "default", ...props }: VerifiedIconProp
           fillRule="evenodd"
           clipRule="evenodd"
           d="M31.9998 14.7583C32.341 14.3238 32.83 14.0514 33.3574 14.0071C33.8826 13.9606 34.4055 14.1446 34.8059 14.5151C35.2083 14.8858 35.4561 15.4158 35.4947 15.9826C35.5333 16.552 35.3605 17.114 35.0128 17.5459L22.5364 33.2516C22.1659 33.7177 21.6293 33.9901 21.0609 34H21.0312C20.4741 34 19.9422 33.7473 19.5669 33.3031L13.5209 26.1645C12.7797 25.291 12.8366 23.9363 13.6461 23.1363C14.4554 22.3387 15.7106 22.4 16.4496 23.2736L20.9834 28.6258L31.9998 14.7583Z"
-          fill="#5b23e1"
+          fill={backgroundColor || "#5b23e1"}
         />
       </svg>
     );

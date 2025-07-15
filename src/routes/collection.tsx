@@ -187,7 +187,13 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
                 >
                   {artistName}
                 </span>
-                <UserBadge isVerified={isArtistVerified} tier={artistTier} size={32} verifiedVariant="white" />
+                <UserBadge
+                  isVerified={isArtistVerified}
+                  tier={artistTier}
+                  size={32}
+                  verifiedVariant="white"
+                  backgroundColor={dominantColor}
+                />
               </div>
             </div>
 
