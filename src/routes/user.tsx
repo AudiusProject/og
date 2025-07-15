@@ -7,6 +7,7 @@ import { ContentTag } from "../components/ContentTag";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
 import { APIService } from "../services/api";
+import { sanitizeText } from "../utils/sanitizeText";
 
 // Feature-specific types
 interface UserData {
@@ -38,8 +39,8 @@ export const userRoute = new Hono().get("/:id", async (c) => {
     const user = response.data[0];
 
     // Prepare badge/verification
-    const userName = user.name;
-    const userHandle = user.handle;
+    const userName = sanitizeText(user.name);
+    const userHandle = sanitizeText(user.handle);
     const isUserVerified = user.is_verified;
     const userTier = getBadgeTier(user.total_audio_balance);
     const profilePicture = user.profile_picture["480x480"];

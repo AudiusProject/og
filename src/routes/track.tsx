@@ -11,6 +11,7 @@ import { loadImage } from "../utils/loadImage";
 import { APIService } from "../services/api";
 import { getDominantColor } from "../utils/getDominantColor";
 import { blendWithWhite } from "../utils/blendWithWhite";
+import { sanitizeText } from "../utils/sanitizeText";
 
 // Feature-specific types
 interface UserInfo {
@@ -45,14 +46,13 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
     const track = response.data;
 
     // Prepare badge/verification
-    const artistName = track.user.name;
+    const artistName = sanitizeText(track.user.name);
     const isArtistVerified = track.user.is_verified;
     const artistTier = getBadgeTier(track.user.total_audio_balance);
     const trackArtwork = track.artwork["1000x1000"];
 
     // Get dominant color from artwork
     const dominantColor = trackArtwork ? await getDominantColor(trackArtwork) : undefined;
-    console.log("dominantColor", dominantColor);
 
     // Load fonts
     const font = await getLocalFonts(c, [
@@ -159,10 +159,12 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
                   overflow: "hidden",
                   marginBottom: "24px",
                   maxHeight: "147px", // 3 * 49px lineHeight
+                  textShadow: "0 4px 4px rgba(0, 0, 0, 0.10)",
+                  // textShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.10)",
                   // No ellipsis, just cut off after 3 lines
                 }}
               >
-                {track.title}
+                {sanitizeText(track.title)}
               </div>
               <div
                 style={{

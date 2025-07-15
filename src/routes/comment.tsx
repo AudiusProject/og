@@ -7,6 +7,7 @@ import { APIService } from "../services/api";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
 import { getDominantColor } from "../utils/getDominantColor";
+import { sanitizeText } from "../utils/sanitizeText";
 
 // Feature-specific types
 interface UserInfo {
@@ -73,7 +74,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
   const isArtistVerified = track.user.is_verified;
   const artistTier = getBadgeTier(track.user.total_audio_balance);
 
-  const commentText = comment.message;
+  const commentText = sanitizeText(comment.message);
   const commenterName = user.name;
   const isCommenterVerified = user.is_verified;
   const commenterTier = getBadgeTier(user.total_audio_balance);
@@ -82,6 +83,8 @@ async function renderCommentOGImage(c: any, commentId: string) {
   const userProfilePicture = user.profile_picture["150x150"];
 
   const dominantColor = trackArtwork ? await getDominantColor(trackArtwork) : undefined;
+
+  console.log("commentText", commentText);
 
   const renderContent = () => (
     <BaseLayout>
@@ -206,7 +209,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
               gap: "16px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
               <h2
                 style={{
                   display: "flex",

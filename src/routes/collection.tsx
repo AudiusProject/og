@@ -10,6 +10,7 @@ import { getLocalFonts } from "../utils/getFonts";
 import { APIService } from "../services/api";
 import { getDominantColor } from "../utils/getDominantColor";
 import { blendWithWhite } from "../utils/blendWithWhite";
+import { sanitizeText } from "../utils/sanitizeText";
 
 // Feature-specific types
 interface UserInfo {
@@ -45,10 +46,10 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
     const playlist = response.data[0];
 
     // Prepare badge/verification
-    const artistName = playlist.user.name;
+    const artistName = sanitizeText(playlist.user.name);
     const isArtistVerified = playlist.user.is_verified;
     const artistTier = getBadgeTier(playlist.user.total_audio_balance);
-    const playlistArtwork = playlist.artwork["1000x1000"];
+    const playlistArtwork = playlist.artwork["480x480"];
 
     // Get dominant color from artwork
     const dominantColor = playlistArtwork ? await getDominantColor(playlistArtwork) : undefined;
@@ -164,29 +165,30 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
                   // No ellipsis, just cut off after 3 lines
                 }}
               >
-                {playlist.playlist_name}
+                {sanitizeText(playlist.playlist_name)}
               </div>
               <div
                 style={{
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                  gap: "8px",
                   width: "490px",
                 }}
               >
-                <span
+                <h2
                   style={{
+                    gap: "8px",
                     fontWeight: 700,
                     fontSize: "32px",
                     color: "#fff",
                     fontFamily: "Avenir Next LT Pro",
                     whiteSpace: "nowrap",
                     overflow: "hidden",
+                    textOverflow: "ellipsis",
                   }}
                 >
                   {artistName}
-                </span>
+                </h2>
                 <UserBadge
                   isVerified={isArtistVerified}
                   tier={artistTier}

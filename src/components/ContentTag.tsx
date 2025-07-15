@@ -18,7 +18,7 @@ export const ContentTag = ({ text, variant = "light", color: colorProp }: Conten
         borderRadius: "8px",
         fontWeight: 800,
         fontSize: "22px",
-        padding: "8px",
+        padding: "4px 8px",
         letterSpacing: "4px",
         textTransform: "uppercase",
         color,
