@@ -1,6 +1,6 @@
 import { BadgeTier } from "../utils/badge";
 import React from "react";
-import { ArtistTierIcon } from "./ArtistTierIcon";
+import { UserTierIcon } from "./UserTierIcon";
 import { VerifiedIcon } from "./VerifiedIcon";
 
 interface UserBadgeProps {
@@ -23,7 +23,7 @@ export const UserBadge = ({
       {isVerified && (
         <VerifiedIcon variant={verifiedVariant} height={size} width={size} backgroundColor={backgroundColor} />
       )}
-      {tier && <ArtistTierIcon tier={tier} height={size} width={size} />}
+      {tier && <UserTierIcon tier={tier} height={size} width={size} />}
     </div>
   );
 };

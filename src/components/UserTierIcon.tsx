@@ -5,11 +5,11 @@ import { TokenGold } from "./TokenGold";
 import { TokenPlatinum } from "./TokenPlatinum";
 import { BadgeTier } from "../utils/badge";
 
-interface ArtistTierIconProps extends React.SVGProps<SVGSVGElement> {
+interface UserTierIconProps extends React.SVGProps<SVGSVGElement> {
   tier: BadgeTier;
 }
 
-export const ArtistTierIcon: React.FC<ArtistTierIconProps> = ({ tier, ...props }) => {
+export const UserTierIcon: React.FC<UserTierIconProps> = ({ tier, ...props }) => {
   switch (tier) {
     case "Bronze":
       return <TokenBronze {...props} />;

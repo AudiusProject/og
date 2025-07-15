@@ -5,7 +5,7 @@ import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
 import { PlayButton } from "../components/PlayButton";
 import { ContentTag } from "../components/ContentTag";
 import { Title } from "../components/Title";
-import { ArtistName } from "../components/ArtistName";
+import { UserName } from "../components/UserName";
 import { Artwork } from "../components/Artwork";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
@@ -119,7 +119,7 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
               }}
             >
               <Title shadow>{track.title}</Title>
-              <ArtistName
+              <UserName
                 name={artistName}
                 shadow
                 isVerified={isArtistVerified}

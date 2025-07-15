@@ -4,7 +4,8 @@ import { BaseLayout } from "../components/BaseLayout";
 import { UserBadge } from "../components/UserBadge";
 import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
 import { Title } from "../components/Title";
-import { ArtistName } from "../components/ArtistName";
+import { UserName } from "../components/UserName";
+import { Artwork } from "../components/Artwork";
 import { APIService } from "../services/api";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
@@ -109,15 +110,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
             alignItems: "center",
           }}
         >
-          {trackArtwork && (
-            <img
-              src={trackArtwork}
-              alt="Track Artwork"
-              height={120}
-              width={120}
-              style={{ width: "120px", height: "120px", borderRadius: "10px" }}
-            />
-          )}
+          {trackArtwork && <Artwork src={trackArtwork} alt="Track Artwork" size={120} dominantColor={dominantColor} />}
           <div
             style={{
               display: "flex",
@@ -148,7 +141,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
                 }}
               >
                 By{" "}
-                <ArtistName
+                <UserName
                   name={artistName}
                   isVerified={isArtistVerified}
                   tier={artistTier}
@@ -198,27 +191,15 @@ async function renderCommentOGImage(c: any, commentId: string) {
               gap: "16px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <h2
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  margin: 0,
-                  color: COLORS.TEXT_PRIMARY,
-                  fontSize: "60px",
-                  fontStyle: "normal",
-                  fontWeight: "700",
-                  lineHeight: "64px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {commenterName}
-              </h2>
-              <UserBadge isVerified={isCommenterVerified} tier={commenterTier} size={52} verifiedVariant="default" />
-            </div>
+            <UserName
+              name={commenterName}
+              isVerified={isCommenterVerified}
+              tier={commenterTier}
+              badgeSize={52}
+              verifiedVariant="default"
+              color={COLORS.TEXT_PRIMARY}
+              style={{ fontSize: "60px", fontWeight: "700" }}
+            />
             <p
               style={{
                 margin: 0,

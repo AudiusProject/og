@@ -150,12 +150,13 @@ export const userRoute = new Hono().get("/:id", async (c) => {
             <div
               style={{
                 display: "flex",
+                flex: "1 0 0",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "flex-start",
+                alignSelf: "stretch",
                 padding: "0px",
                 gap: "16px",
-                width: "696px",
               }}
             >
               {/* Profile Tag */}
