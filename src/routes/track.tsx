@@ -1,17 +1,16 @@
 import { Hono } from "hono";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
-import { UserBadge } from "../components/UserBadge";
 import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
 import { PlayButton } from "../components/PlayButton";
 import { ContentTag } from "../components/ContentTag";
+import { Title } from "../components/Title";
+import { ArtistName } from "../components/ArtistName";
+import { Artwork } from "../components/Artwork";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
-import { loadImage } from "../utils/loadImage";
 import { APIService } from "../services/api";
 import { getDominantColor } from "../utils/getDominantColor";
-import { blendWithWhite } from "../utils/blendWithWhite";
-import { sanitizeText } from "../utils/sanitizeText";
 
 // Feature-specific types
 interface UserInfo {
@@ -46,10 +45,10 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
     const track = response.data;
 
     // Prepare badge/verification
-    const artistName = sanitizeText(track.user.name);
+    const artistName = track.user.name;
     const isArtistVerified = track.user.is_verified;
     const artistTier = getBadgeTier(track.user.total_audio_balance);
-    const trackArtwork = track.artwork["1000x1000"];
+    const trackArtwork = track.artwork["480x480"];
 
     // Get dominant color from artwork
     const dominantColor = trackArtwork ? await getDominantColor(trackArtwork) : undefined;
@@ -78,36 +77,7 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
           }}
         >
           {/* Artwork */}
-          <div
-            style={{
-              width: "598px",
-              height: "598px",
-              backgroundColor: "#E7E7EA",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow:
-                "0px 100px 80px rgba(0,0,0,0.07), 0px 41.78px 33.42px rgba(0,0,0,0.05), 0px 22.34px 17.87px rgba(0,0,0,0.04), 0px 12.52px 10.02px rgba(0,0,0,0.035), 0px 6.65px 5.32px rgba(0,0,0,0.028), 0px 2.77px 2.21px rgba(0,0,0,0.02)",
-              position: "relative",
-              overflow: "hidden",
-              border: dominantColor
-                ? `2px solid ${blendWithWhite(dominantColor.replace("#", ""), 0.1)}`
-                : "2px solid #FFF",
-              borderRadius: "24px",
-            }}
-          >
-            {trackArtwork && (
-              <img
-                src={trackArtwork}
-                alt="Artwork"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                }}
-              />
-            )}
-          </div>
+          {trackArtwork && <Artwork src={trackArtwork} alt="Track Artwork" dominantColor={dominantColor} />}
 
           {/* Right Side */}
           <div
@@ -148,54 +118,14 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
                 marginBottom: "56px",
               }}
             >
-              <div
-                style={{
-                  width: "490px",
-                  fontWeight: 800,
-                  fontSize: "40px",
-                  lineHeight: "49px",
-                  color: "#fff",
-                  fontFamily: "Avenir Next LT Pro",
-                  overflow: "hidden",
-                  marginBottom: "24px",
-                  maxHeight: "147px", // 3 * 49px lineHeight
-                  textShadow: "0 4px 4px rgba(0, 0, 0, 0.10)",
-                  // textShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.10)",
-                  // No ellipsis, just cut off after 3 lines
-                }}
-              >
-                {sanitizeText(track.title)}
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: "8px",
-                  height: "39px",
-                }}
-              >
-                <span
-                  style={{
-                    fontWeight: 700,
-                    fontSize: "32px",
-                    color: "#fff",
-                    fontFamily: "Avenir Next LT Pro",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {artistName}
-                </span>
-                <UserBadge
-                  isVerified={isArtistVerified}
-                  tier={artistTier}
-                  size={32}
-                  verifiedVariant="white"
-                  backgroundColor={dominantColor}
-                />
-              </div>
+              <Title shadow>{track.title}</Title>
+              <ArtistName
+                name={artistName}
+                shadow
+                isVerified={isArtistVerified}
+                tier={artistTier}
+                backgroundColor={dominantColor}
+              />
             </div>
 
             <PlayButton size={140} />

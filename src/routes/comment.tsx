@@ -3,6 +3,8 @@ import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
 import { UserBadge } from "../components/UserBadge";
 import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
+import { Title } from "../components/Title";
+import { ArtistName } from "../components/ArtistName";
 import { APIService } from "../services/api";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
@@ -127,22 +129,9 @@ async function renderCommentOGImage(c: any, commentId: string) {
               alignSelf: "center",
             }}
           >
-            <h2
-              style={{
-                margin: 0,
-                color: COLORS.WHITE,
-                fontSize: "48px",
-                fontWeight: "800",
-                lineHeight: "54px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {trackName}
-            </h2>
+            <Title style={{ fontSize: "48px", lineHeight: "54px", margin: 0, width: "auto" }}>{trackName}</Title>
 
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px" }}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
               <p
                 style={{
                   display: "flex",
@@ -151,22 +140,22 @@ async function renderCommentOGImage(c: any, commentId: string) {
                   margin: 0,
                   color: COLORS.WHITE,
                   fontSize: "40px",
-                  fontWeight: "300",
+                  fontWeight: "500",
                   lineHeight: "48px",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
                 }}
               >
-                By {artistName}
+                By{" "}
+                <ArtistName
+                  name={artistName}
+                  isVerified={isArtistVerified}
+                  tier={artistTier}
+                  backgroundColor={dominantColor}
+                  style={{ fontSize: "40px", fontWeight: "500", lineHeight: "48px" }}
+                />
               </p>
-              <UserBadge
-                isVerified={isArtistVerified}
-                tier={artistTier}
-                size={32}
-                verifiedVariant="white"
-                backgroundColor={dominantColor}
-              />
             </div>
           </div>
         </div>
@@ -197,7 +186,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
                 alt="Profile Picture"
                 height={128}
                 width={128}
-                style={{ width: "128px", height: "128px", borderRadius: "50%" }}
+                style={{ width: "128px", height: "128px", borderRadius: "50%", border: "6.4px solid #EFEFF1" }}
               />
             )}
           </div>
