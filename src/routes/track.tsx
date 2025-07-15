@@ -105,8 +105,8 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
                 marginBottom: "56px",
               }}
             >
-              <ContentTag text="track" color={dominantColor} />
-              <AudiusLogoHorizontal height={40} />
+              <ContentTag text="track" color={dominantColor} shadow />
+              <AudiusLogoHorizontal height={40} shadow />
             </div>
 
             {/* Title & Artist Grouped with 24px gap */}
@@ -128,7 +128,7 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
               />
             </div>
 
-            <PlayButton size={140} />
+            <PlayButton size={140} shadow />
           </div>
         </div>
       </BaseLayout>
