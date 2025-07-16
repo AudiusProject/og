@@ -107,9 +107,7 @@ export async function googleFont(
       },
     })
   ).text();
-  // console.log(API, css);
   const resource = css.match(/src: url\((.+)\) format\('(opentype|truetype)'\)/);
-  // console.log('resource', resource);
   if (!resource) {
     throw new Error("Failed to fetch font");
   }
@@ -162,16 +160,12 @@ export const directFont = async (
     const cache = caches.default;
     const cacheKey = url;
 
-    // console.log(`[Font] Attempting to fetch: ${name} from ${url}`);
-
     const cachedRes = await cache.match(cacheKey);
     if (cachedRes) {
-      // console.log(`[Font] Cache HIT: ${name}`);
       const data = await cachedRes.arrayBuffer();
       return { data, name, style, weight };
     }
 
-    // console.log(`[Font] Cache MISS: ${name}`);
     const res = await fetch(new URL(url));
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -179,7 +173,6 @@ export const directFont = async (
 
     const data = await res.arrayBuffer();
     await cache.put(cacheKey, new Response(data, { status: 200 }));
-    // console.log(`[Font] Cached new font: ${name}`);
 
     return { data, name, style, weight };
   } catch (error) {

@@ -11,6 +11,7 @@ import { getLocalFonts } from "../utils/getFonts";
 import { getDominantColor } from "../utils/getDominantColor";
 import { sanitizeText } from "../utils/sanitizeText";
 import { loadImage } from "../utils/loadImage";
+import { UserBadge } from "../components/UserBadge";
 
 // Feature-specific types
 interface UserInfo {
@@ -93,8 +94,6 @@ async function renderCommentOGImage(c: any, commentId: string) {
 
   const dominantColor = trackArtwork ? await getDominantColor(trackArtwork) : undefined;
 
-  console.log("commentText", commentText);
-
   const renderContent = () => (
     <BaseLayout>
       <div
@@ -128,14 +127,23 @@ async function renderCommentOGImage(c: any, commentId: string) {
               alignSelf: "center",
             }}
           >
-            <Title style={{ fontSize: "48px", lineHeight: "54px", margin: 0, width: "auto" }}>{trackName}</Title>
+            <Title
+              style={{
+                fontSize: "48px",
+                lineHeight: "54px",
+                margin: 0,
+                width: "auto",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {trackName}
+            </Title>
 
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
               <p
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
                   margin: 0,
                   color: COLORS.WHITE,
                   fontSize: "40px",
@@ -144,17 +152,19 @@ async function renderCommentOGImage(c: any, commentId: string) {
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
+                  // gap is needed to fix text ellipsis
+                  gap: "8px",
                 }}
               >
-                By{" "}
-                <UserName
-                  name={artistName}
-                  isVerified={isArtistVerified}
-                  tier={artistTier}
-                  backgroundColor={dominantColor}
-                  style={{ fontSize: "40px", fontWeight: "500", lineHeight: "48px" }}
-                />
+                By {artistName}
               </p>
+              <UserBadge
+                isVerified={isArtistVerified}
+                tier={artistTier}
+                size={32}
+                verifiedVariant="white"
+                backgroundColor={dominantColor}
+              />
             </div>
           </div>
         </div>
@@ -196,7 +206,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
                 alt="Profile Picture"
                 height={128}
                 width={128}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
               />
             </div>
           </div>
@@ -226,6 +236,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
                 fontWeight: "500",
                 lineHeight: "72px",
                 position: "relative",
+                wordBreak: "break-word",
               }}
             >
               {commentText}
