@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
-import { APIService } from "../services/api";
+import { APIService } from "../api";
 import { getLocalFonts } from "../utils/getFonts";
 import { loadImage } from "../utils/loadImage";
 

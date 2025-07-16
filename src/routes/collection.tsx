@@ -9,8 +9,9 @@ import { UserName } from "../components/UserName";
 import { Artwork } from "../components/Artwork";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
-import { APIService } from "../services/api";
+import { APIService } from "../api";
 import { getDominantColor } from "../utils/getDominantColor";
+import { loadImage } from "../utils/loadImage";
 
 // Feature-specific types
 interface UserInfo {
@@ -54,6 +55,10 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
     // Get dominant color from artwork
     const dominantColor = playlistArtwork ? await getDominantColor(playlistArtwork) : undefined;
 
+    // Load fallback artwork
+    const fallbackArtwork = await loadImage(c, "/images/blank-artwork.png");
+    const finalArtwork = playlistArtwork || fallbackArtwork!;
+
     // Determine content type for tag
     const contentType = playlist.is_album ? "album" : "playlist";
 
@@ -81,7 +86,7 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
           }}
         >
           {/* Artwork */}
-          {playlistArtwork && <Artwork src={playlistArtwork} alt="Playlist Artwork" dominantColor={dominantColor} />}
+          <Artwork src={finalArtwork} alt="Playlist Artwork" dominantColor={dominantColor} />
 
           {/* Right Side */}
           <div

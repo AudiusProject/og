@@ -6,8 +6,9 @@ import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
 import { ContentTag } from "../components/ContentTag";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
-import { APIService } from "../services/api";
+import { APIService } from "../api";
 import { sanitizeText } from "../utils/sanitizeText";
+import { loadImage } from "../utils/loadImage";
 
 // Feature-specific types
 interface UserData {
@@ -43,8 +44,14 @@ export const userRoute = new Hono().get("/:id", async (c) => {
     const userHandle = sanitizeText(user.handle);
     const isUserVerified = user.is_verified;
     const userTier = getBadgeTier(user.total_audio_balance);
-    const profilePicture = user.profile_picture["480x480"];
+    const profilePicture = user.profile_picture?.["480x480"];
     const coverPhoto = user.cover_photo?.["2000x"];
+
+    // Load fallback images
+    const fallbackProfilePic = await loadImage(c, "/images/blank-profile-picture.png");
+    const fallbackCoverPhoto = await loadImage(c, "/images/blank-cover-photo.jpg");
+    const finalProfilePicture = profilePicture || fallbackProfilePic || undefined;
+    const finalCoverPhoto = coverPhoto || (profilePicture ? undefined : fallbackCoverPhoto) || undefined;
 
     // Load fonts
     const font = await getLocalFonts(c, [
@@ -66,9 +73,9 @@ export const userRoute = new Hono().get("/:id", async (c) => {
           }}
         >
           {/* Cover Photo or Blurred Profile Background */}
-          {coverPhoto ? (
+          {finalCoverPhoto ? (
             <img
-              src={coverPhoto}
+              src={finalCoverPhoto}
               alt="Cover Photo"
               width={1200}
               height={295}
@@ -118,6 +125,7 @@ export const userRoute = new Hono().get("/:id", async (c) => {
                 alignItems: "center",
                 justifyContent: "center",
                 position: "relative",
+                backgroundColor: "#E7E7EA",
               }}
             >
               <div
@@ -130,19 +138,17 @@ export const userRoute = new Hono().get("/:id", async (c) => {
                   display: "flex",
                 }}
               >
-                {profilePicture && (
-                  <img
-                    src={profilePicture}
-                    alt="Profile Picture"
-                    width={400}
-                    height={400}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                )}
+                <img
+                  src={finalProfilePicture}
+                  alt="Profile Picture"
+                  width={400}
+                  height={400}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
               </div>
             </div>
 

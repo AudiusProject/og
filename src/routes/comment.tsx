@@ -1,16 +1,16 @@
 import { Hono } from "hono";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
-import { UserBadge } from "../components/UserBadge";
 import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
 import { Title } from "../components/Title";
 import { UserName } from "../components/UserName";
 import { Artwork } from "../components/Artwork";
-import { APIService } from "../services/api";
+import { APIService } from "../api";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
 import { getDominantColor } from "../utils/getDominantColor";
 import { sanitizeText } from "../utils/sanitizeText";
+import { loadImage } from "../utils/loadImage";
 
 // Feature-specific types
 interface UserInfo {
@@ -85,6 +85,12 @@ async function renderCommentOGImage(c: any, commentId: string) {
   const trackArtwork = track.artwork["150x150"];
   const userProfilePicture = user.profile_picture["150x150"];
 
+  // Load fallback images
+  const fallbackProfilePic = await loadImage(c, "/images/blank-profile-picture.png");
+  const fallbackArtwork = await loadImage(c, "/images/blank-artwork.png");
+  const finalUserProfilePicture = userProfilePicture || fallbackProfilePic || undefined;
+  const finalArtwork = trackArtwork || fallbackArtwork!;
+
   const dominantColor = trackArtwork ? await getDominantColor(trackArtwork) : undefined;
 
   console.log("commentText", commentText);
@@ -110,7 +116,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
             alignItems: "center",
           }}
         >
-          {trackArtwork && <Artwork src={trackArtwork} alt="Track Artwork" size={120} dominantColor={dominantColor} />}
+          <Artwork src={finalArtwork} alt="Track Artwork" size={120} dominantColor={dominantColor} />
           <div
             style={{
               display: "flex",
@@ -173,15 +179,26 @@ async function renderCommentOGImage(c: any, commentId: string) {
           }}
         >
           <div style={{ display: "flex", alignSelf: "flex-start", flexBasis: "128px" }}>
-            {userProfilePicture && (
+            <div
+              style={{
+                width: "128px",
+                height: "128px",
+                borderRadius: "50%",
+                backgroundColor: "#E7E7EA",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                border: "6.4px solid #EFEFF1",
+              }}
+            >
               <img
-                src={userProfilePicture}
+                src={finalUserProfilePicture}
                 alt="Profile Picture"
                 height={128}
                 width={128}
-                style={{ width: "128px", height: "128px", borderRadius: "50%", border: "6.4px solid #EFEFF1" }}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
-            )}
+            </div>
           </div>
           <div
             style={{

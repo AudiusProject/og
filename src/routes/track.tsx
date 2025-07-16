@@ -9,8 +9,9 @@ import { UserName } from "../components/UserName";
 import { Artwork } from "../components/Artwork";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
-import { APIService } from "../services/api";
+import { APIService } from "../api";
 import { getDominantColor } from "../utils/getDominantColor";
+import { loadImage } from "../utils/loadImage";
 
 // Feature-specific types
 interface UserInfo {
@@ -53,6 +54,10 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
     // Get dominant color from artwork
     const dominantColor = trackArtwork ? await getDominantColor(trackArtwork) : undefined;
 
+    // Load fallback artwork
+    const fallbackArtwork = await loadImage(c, "/images/blank-artwork.png");
+    const finalArtwork = trackArtwork || fallbackArtwork!;
+
     // Load fonts
     const font = await getLocalFonts(c, [
       { path: "Inter-Bold.ttf", weight: 700 },
@@ -77,7 +82,7 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
           }}
         >
           {/* Artwork */}
-          {trackArtwork && <Artwork src={trackArtwork} alt="Track Artwork" dominantColor={dominantColor} />}
+          <Artwork src={finalArtwork} alt="Track Artwork" dominantColor={dominantColor} />
 
           {/* Right Side */}
           <div
