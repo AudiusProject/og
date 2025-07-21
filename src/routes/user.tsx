@@ -83,6 +83,7 @@ export const userRoute = new Hono().get("/:id", async (c) => {
                 width: "1200px",
                 height: "295px",
                 objectFit: "cover",
+                borderBottom: "2px solid lightgray",
               }}
             />
           ) : profilePicture ? (
@@ -97,6 +98,7 @@ export const userRoute = new Hono().get("/:id", async (c) => {
                 objectFit: "cover",
                 filter: "blur(25px)",
                 transform: "scale(1.1)",
+                borderBottom: "2px solid rgba(255, 255, 255, 0.25)",
               }}
             />
           ) : null}
@@ -136,6 +138,7 @@ export const userRoute = new Hono().get("/:id", async (c) => {
                   overflow: "hidden",
                   position: "relative",
                   display: "flex",
+                  border: "2px solid lightgray",
                 }}
               >
                 <img

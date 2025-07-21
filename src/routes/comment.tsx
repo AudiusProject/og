@@ -12,6 +12,7 @@ import { getDominantColor } from "../utils/getDominantColor";
 import { sanitizeText } from "../utils/sanitizeText";
 import { loadImage } from "../utils/loadImage";
 import { UserBadge } from "../components/UserBadge";
+import { blendWithWhite } from "../utils/blendWithWhite";
 
 // Feature-specific types
 interface UserInfo {
@@ -104,6 +105,9 @@ async function renderCommentOGImage(c: any, commentId: string) {
           justifyContent: "space-between",
           background: dominantColor ?? STYLES.GRADIENT_BACKGROUND,
           boxSizing: "border-box",
+          borderBottom: dominantColor
+            ? `2px solid ${blendWithWhite(dominantColor.replace("#", ""), 0.1)}`
+            : "2px solid #FFF",
         }}
       >
         <div
