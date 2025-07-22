@@ -261,9 +261,14 @@ export const userRoute = new Hono().get("/:id", async (c) => {
     );
 
     return new ImageResponse(renderContent(), {
-      width: 1200,
-      height: 630,
+      width: 800,  // Reduced from 1200 (33% reduction)
+      height: 420, // Reduced from 630 (33% reduction) 
       fonts: Array.isArray(font) ? [...font] : [font],
+      headers: {
+        'content-type': 'image/png',
+        'cache-control': 'public, max-age=31536000, immutable',
+        'content-encoding': 'gzip', // Enable compression hint
+      },
     });
   } catch (error: any) {
     console.error("User OG Image generation error:", error);

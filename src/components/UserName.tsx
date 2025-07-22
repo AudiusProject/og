@@ -32,15 +32,15 @@ export function UserName({
       <span
         style={{
           fontWeight: 700,
-          fontSize: "32px",
+          fontSize: "22px", // Reduced from 32px
           color: color,
-          fontFamily: "Avenir Next LT Pro",
+          fontFamily: "Inter",
           whiteSpace: "nowrap",
           overflow: "hidden",
           textOverflow: "ellipsis",
-          textShadow: shadow ? "0 4px 4px rgba(0, 0, 0, 0.10)" : "none",
+          textShadow: shadow ? "0 2px 2px rgba(0, 0, 0, 0.10)" : "none", // Reduced shadow
           // gap is needed to fix text ellipsis
-          gap: "8px",
+          gap: "6px", // Reduced from 8px
           ...style,
         }}
       >
