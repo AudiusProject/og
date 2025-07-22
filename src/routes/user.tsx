@@ -47,11 +47,10 @@ export const userRoute = new Hono().get("/:id", async (c) => {
     const profilePicture = user.profile_picture?.["480x480"];
     const coverPhoto = user.cover_photo?.["2000x"];
 
-    // Load fallback images
-    const fallbackProfilePic = await loadImage(c, "/images/blank-profile-picture.png");
-    const fallbackCoverPhoto = await loadImage(c, "/images/blank-cover-photo.jpg");
-    const finalProfilePicture = profilePicture || fallbackProfilePic || undefined;
-    const finalCoverPhoto = coverPhoto || (profilePicture ? undefined : fallbackCoverPhoto) || undefined;
+    // Load fallback images only if needed
+    const finalProfilePicture = profilePicture || (await loadImage(c, "/images/blank-profile-picture.png"))!;
+    const finalCoverPhoto =
+      coverPhoto || (profilePicture ? undefined : (await loadImage(c, "/images/blank-cover-photo.jpg"))!);
 
     // Load fonts
     const font = await getLocalFonts(c, [

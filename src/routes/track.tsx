@@ -54,9 +54,8 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
     // Get dominant color from artwork
     const dominantColor = trackArtwork ? await getDominantColor(trackArtwork) : undefined;
 
-    // Load fallback artwork
-    const fallbackArtwork = await loadImage(c, "/images/blank-artwork.png");
-    const finalArtwork = trackArtwork || fallbackArtwork!;
+    // Load fallback artwork only if needed
+    const finalArtwork = trackArtwork || (await loadImage(c, "/images/blank-artwork.png"))!;
 
     // Load fonts
     const font = await getLocalFonts(c, [

@@ -55,9 +55,8 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
     // Get dominant color from artwork
     const dominantColor = playlistArtwork ? await getDominantColor(playlistArtwork) : undefined;
 
-    // Load fallback artwork
-    const fallbackArtwork = await loadImage(c, "/images/blank-artwork.png");
-    const finalArtwork = playlistArtwork || fallbackArtwork!;
+    // Load fallback artwork only if needed
+    const finalArtwork = playlistArtwork || (await loadImage(c, "/images/blank-artwork.png"))!;
 
     // Determine content type for tag
     const contentType = playlist.is_album ? "album" : "playlist";
