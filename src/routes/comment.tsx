@@ -101,7 +101,8 @@ async function renderCommentOGImage(c: any, commentId: string) {
         style={{
           display: "flex",
           gap: "40px",
-          padding: "40px",
+          // 40 - 6.4px border on left
+          padding: "40px 40px 40px 33px",
           justifyContent: "space-between",
           background: dominantColor ?? STYLES.GRADIENT_BACKGROUND,
           boxSizing: "border-box",
@@ -188,31 +189,29 @@ async function renderCommentOGImage(c: any, commentId: string) {
         <div
           style={{
             display: "flex",
-            gap: "32px",
+            // 32 - 6.4px border
+            gap: "25.6px",
             alignContent: "center",
           }}
         >
-          <div style={{ display: "flex", alignSelf: "flex-start", flexBasis: "128px" }}>
-            <div
-              style={{
-                width: "128px",
-                height: "128px",
-                borderRadius: "50%",
-                backgroundColor: "#E7E7EA",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "6.4px solid #EFEFF1",
-              }}
-            >
-              <img
-                src={finalUserProfilePicture}
-                alt="Profile Picture"
-                height={128}
-                width={128}
-                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
-              />
-            </div>
+          <div
+            style={{
+              // 128px + 12.8px border
+              width: "141px",
+              height: "141px",
+              borderRadius: "50%",
+              backgroundColor: "#E7E7EA",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "6.4px solid #EFEFF1",
+            }}
+          >
+            <img
+              src={finalUserProfilePicture}
+              alt="Profile Picture"
+              style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
+            />
           </div>
           <div
             style={{
