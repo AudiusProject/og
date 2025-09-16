@@ -9,23 +9,7 @@ import { getLocalFonts } from "../utils/getFonts";
 import { APIService } from "../api";
 import { sanitizeText } from "../utils/sanitizeText";
 import { loadImage } from "../utils/loadImage";
-
-// Feature-specific types
-interface UserData {
-  id?: string;
-  name: string;
-  handle: string;
-  is_verified: boolean;
-  total_audio_balance: number;
-  profile_picture: Record<string, string>;
-  cover_photo?: Record<string, string>;
-  profile_type?: string;
-  track_count?: number;
-}
-
-interface UserResponse {
-  data?: UserData[];
-}
+import { UserData, UserResponse } from "../types";
 
 // Route definition
 export const userRoute = new Hono().get("/:id", async (c) => {

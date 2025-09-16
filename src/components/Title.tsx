@@ -12,6 +12,7 @@ export function Title({ children, shadow = false, style = {} }: TitleProps) {
   return (
     <div
       style={{
+        display: "flex",
         width: "490px",
         fontWeight: 800,
         fontSize: "40px",
