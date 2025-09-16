@@ -32,7 +32,7 @@ export interface CoinData {
   mint: string;
   decimals: number;
   owner_id: string;
-  logoUri?: string;
+  logo_uri?: string;
   description?: string;
   website?: string;
   createdAt: string;

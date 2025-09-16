@@ -22,7 +22,6 @@ export const coinsRoute = new Hono().get("/:ticker", async (c) => {
     // Fetch coin data using APIService
     const apiService = new APIService(c);
     const response: CoinResponse = await apiService.fetch(`/v1/coins/ticker/${ticker}`);
-    console.log("response", response);
     if (!response.data) return c.json({ error: "Coin not found" }, 404);
     const coin = response.data;
 
@@ -34,9 +33,9 @@ export const coinsRoute = new Hono().get("/:ticker", async (c) => {
     const user = userResponse.data[0];
 
     // Prepare coin data
-    const coinName = coin.name;
-    const coinTicker = coin.ticker || coin.symbol || `$${ticker}`;
-    const coinLogo = coin.logoUri;
+    const coinName = coin.name || coin.ticker || coin.symbol || ticker;
+    const coinTicker = coin.name ? coin.ticker || coin.symbol || `$${ticker}` : null;
+    const coinLogo = coin.logo_uri;
 
     // Prepare user data
     const artistName = sanitizeText(user.name);
@@ -274,19 +273,21 @@ export const coinsRoute = new Hono().get("/:ticker", async (c) => {
                 {coinName}
               </div>
 
-              {/* Coin Ticker */}
-              <div
-                style={{
-                  display: "flex",
-                  fontSize: "48px",
-                  fontWeight: 700,
-                  color: "#736E88",
-                  fontFamily: "Inter",
-                  lineHeight: 1,
-                }}
-              >
-                {coinTicker}
-              </div>
+              {/* Coin Ticker - only show if there's a separate name */}
+              {coinTicker && (
+                <div
+                  style={{
+                    display: "flex",
+                    fontSize: "48px",
+                    fontWeight: 700,
+                    color: "#736E88",
+                    fontFamily: "Inter",
+                    lineHeight: 1,
+                  }}
+                >
+                  {coinTicker}
+                </div>
+              )}
             </div>
           </div>
 
