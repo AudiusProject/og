@@ -10,7 +10,7 @@ import { CoinResponse, UserResponse } from "../types";
 import { sanitizeText } from "../utils/sanitizeText";
 
 // Route definition
-export const coinsRoute = new Hono().get("/:ticker", async (c) => {
+export const coinRoute = new Hono().get("/:ticker", async (c) => {
   try {
     const ticker = c.req.param("ticker");
     if (!ticker) return c.json({ error: "Missing ticker" }, 400);
@@ -127,7 +127,7 @@ export const coinsRoute = new Hono().get("/:ticker", async (c) => {
                 padding: "12px 24px 12px 12px",
                 gap: "12px",
                 border: "3px solid #EFEFF1",
-                boxShadow: "0px 0px 18px 0px rgba(0,0,0,0.02), 0px 6px 12px 0px rgba(0,0,0,0.08)",
+                // boxShadow: "0px 0px 18px 0px rgba(0,0,0,0.02), 0px 6px 12px 0px rgba(0,0,0,0.08)",
               }}
             >
               {/* Artist Profile Picture */}
@@ -226,7 +226,7 @@ export const coinsRoute = new Hono().get("/:ticker", async (c) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    boxShadow: "0px 8px 32px rgba(0, 0, 0, 0.1)",
+                    // boxShadow: "0px 8px 32px rgba(0, 0, 0, 0.1)",
                   }}
                 >
                   <img
@@ -279,7 +279,7 @@ export const coinsRoute = new Hono().get("/:ticker", async (c) => {
                     lineHeight: 1,
                   }}
                 >
-                  {coinTicker}
+                  ${coinTicker}
                 </div>
               )}
             </div>
@@ -289,13 +289,15 @@ export const coinsRoute = new Hono().get("/:ticker", async (c) => {
           <div
             style={{
               display: "flex",
-              alignItems: "flex-end",
+              flexDirection: "column",
               justifyContent: "flex-end",
-              padding: "24px",
-              height: "40px",
+              alignItems: "flex-end",
+              height: "48px",
             }}
           >
-            <AudiusLogoHorizontal height={40} />
+            <div style={{ display: "flex", position: "absolute", bottom: "24px", right: "24px" }}>
+              <AudiusLogoHorizontal height={40} variant="dark" />
+            </div>
           </div>
 
           {/* Border Overlay */}
@@ -329,4 +331,4 @@ export const coinsRoute = new Hono().get("/:ticker", async (c) => {
   }
 });
 
-export default coinsRoute;
+export default coinRoute;

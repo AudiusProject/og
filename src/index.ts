@@ -5,7 +5,7 @@ import { commentRoute } from "./routes/comment";
 import { trackRoute } from "./routes/track";
 import { collectionRoute } from "./routes/collection";
 import { userRoute } from "./routes/user";
-import { coinsRoute } from "./routes/coins";
+import { coinRoute } from "./routes/coin";
 
 const app = new Hono()
   .use("*", logger())
@@ -14,7 +14,7 @@ const app = new Hono()
   .route("/track", trackRoute)
   .route("/collection", collectionRoute)
   .route("/user", userRoute)
-  .route("/coin", coinsRoute)
+  .route("/coin", coinRoute)
   .route("/og/comment", commentRoute); // Legacy route support
 
 // Health check and info endpoint
