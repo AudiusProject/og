@@ -2,15 +2,11 @@ import { Hono } from "hono";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
 import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
-import { ContentTag } from "../components/ContentTag";
-import { Title } from "../components/Title";
-import { UserName } from "../components/UserName";
 import { VerifiedIcon } from "../components/VerifiedIcon";
 import { getLocalFonts } from "../utils/getFonts";
 import { APIService } from "../api";
-import { getDominantColor } from "../utils/getDominantColor";
 import { loadImage } from "../utils/loadImage";
-import { CoinData, CoinResponse, UserData, UserResponse } from "../types";
+import { CoinResponse, UserResponse } from "../types";
 import { sanitizeText } from "../utils/sanitizeText";
 
 // Route definition
@@ -43,9 +39,7 @@ export const coinsRoute = new Hono().get("/:ticker", async (c) => {
     const artistCoverPhoto = user.cover_photo?.["2000x"];
     const isUserVerified = user.is_verified;
 
-    // Get dominant color from logo if available
-    const dominantColor = coinLogo ? await getDominantColor(coinLogo) : "#1E3A8A";
-
+    const border = await loadImage(c, "/images/coin-border.png");
     // Load fallback images if needed
     const finalCoinLogo = coinLogo || (await loadImage(c, "/icons/TokenGold.svg"))!;
     const finalProfilePicture = artistProfilePicture || (await loadImage(c, "/images/blank-profile-picture.png"))!;
@@ -303,6 +297,23 @@ export const coinsRoute = new Hono().get("/:ticker", async (c) => {
           >
             <AudiusLogoHorizontal height={40} />
           </div>
+
+          {/* Border Overlay */}
+          {border && (
+            <img
+              src={border}
+              alt="Border"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "1200px",
+                height: "630px",
+                zIndex: 999,
+                pointerEvents: "none",
+              }}
+            />
+          )}
         </div>
       </BaseLayout>
     );
