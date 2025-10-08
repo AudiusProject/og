@@ -6,6 +6,7 @@ import { trackRoute } from "./routes/track";
 import { collectionRoute } from "./routes/collection";
 import { userRoute } from "./routes/user";
 import { coinRoute } from "./routes/coin";
+import { coinsRoute } from "./routes/coins";
 
 const app = new Hono()
   .use("*", logger())
@@ -15,6 +16,7 @@ const app = new Hono()
   .route("/collection", collectionRoute)
   .route("/user", userRoute)
   .route("/coin", coinRoute)
+  .route("/coins", coinsRoute)
   .route("/og/comment", commentRoute); // Legacy route support
 
 // Health check and info endpoint
@@ -29,9 +31,10 @@ app.get("/", async (c) => {
       collection: "/collection/:id",
       user: "/user/:id",
       coin: "/coin/:ticker",
+      coins: "/coins",
       "comment (legacy)": "/og/comment/:id",
     },
-    implemented: ["airdrop", "comment", "track", "collection", "user", "coin"],
+    implemented: ["airdrop", "comment", "track", "collection", "user", "coin", "coins"],
   });
 });
 
