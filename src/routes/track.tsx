@@ -12,6 +12,8 @@ import { getLocalFonts } from "../utils/getFonts";
 import { APIService } from "../api";
 import { getDominantColor } from "../utils/getDominantColor";
 import { loadImage } from "../utils/loadImage";
+import { getImageUrlWithFallback } from "../utils/fetchImageWithFallback";
+import type { SquareImage } from "../types";
 
 // Feature-specific types
 interface UserInfo {
@@ -19,13 +21,13 @@ interface UserInfo {
   name: string;
   is_verified: boolean;
   total_audio_balance: number;
-  profile_picture?: Record<string, string>;
+  profile_picture?: SquareImage;
 }
 
 interface TrackData {
   id?: string;
   title: string;
-  artwork: Record<string, string>;
+  artwork?: SquareImage;
   user: UserInfo;
 }
 
@@ -49,13 +51,15 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
     const artistName = track.user.name;
     const isArtistVerified = track.user.is_verified;
     const artistTier = getBadgeTier(track.user.total_audio_balance);
-    const trackArtwork = track.artwork["480x480"];
 
-    // Get dominant color from artwork
-    const dominantColor = trackArtwork ? await getDominantColor(trackArtwork) : undefined;
+    // Use mirror fallback for artwork
+    const trackArtwork = await getImageUrlWithFallback(track.artwork, "480x480");
+
+    // Get dominant color from artwork with mirror fallback
+    const dominantColor = trackArtwork ? await getDominantColor(trackArtwork, track.artwork?.mirrors) : undefined;
 
     // Load fallback artwork only if needed
-    const finalArtwork = trackArtwork || (await loadImage(c, "/images/blank-artwork.png"))!;
+    const finalArtwork = trackArtwork ?? (await loadImage(c, "/images/blank-artwork.png"))!;
 
     // Load fonts
     const font = await getLocalFonts(c, [

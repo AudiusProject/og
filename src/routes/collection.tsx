@@ -12,6 +12,8 @@ import { getLocalFonts } from "../utils/getFonts";
 import { APIService } from "../api";
 import { getDominantColor } from "../utils/getDominantColor";
 import { loadImage } from "../utils/loadImage";
+import { getImageUrlWithFallback } from "../utils/fetchImageWithFallback";
+import type { SquareImage } from "../types";
 
 // Feature-specific types
 interface UserInfo {
@@ -19,13 +21,13 @@ interface UserInfo {
   name: string;
   is_verified: boolean;
   total_audio_balance: number;
-  profile_picture?: Record<string, string>;
+  profile_picture?: SquareImage;
 }
 
 interface PlaylistData {
   id?: string;
   playlist_name: string;
-  artwork: Record<string, string>;
+  artwork?: SquareImage;
   user: UserInfo;
   is_album?: boolean;
 }
@@ -50,13 +52,17 @@ export const collectionRoute = new Hono().get("/:id", async (c) => {
     const artistName = playlist.user.name;
     const isArtistVerified = playlist.user.is_verified;
     const artistTier = getBadgeTier(playlist.user.total_audio_balance);
-    const playlistArtwork = playlist.artwork["480x480"];
 
-    // Get dominant color from artwork
-    const dominantColor = playlistArtwork ? await getDominantColor(playlistArtwork) : undefined;
+    // Use mirror fallback for artwork
+    const playlistArtwork = await getImageUrlWithFallback(playlist.artwork, "480x480");
+
+    // Get dominant color from artwork with mirror fallback
+    const dominantColor = playlistArtwork
+      ? await getDominantColor(playlistArtwork, playlist.artwork?.mirrors)
+      : undefined;
 
     // Load fallback artwork only if needed
-    const finalArtwork = playlistArtwork || (await loadImage(c, "/images/blank-artwork.png"))!;
+    const finalArtwork = playlistArtwork ?? (await loadImage(c, "/images/blank-artwork.png"))!;
 
     // Determine content type for tag
     const contentType = playlist.is_album ? "album" : "playlist";

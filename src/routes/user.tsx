@@ -9,6 +9,7 @@ import { getLocalFonts } from "../utils/getFonts";
 import { APIService } from "../api";
 import { sanitizeText } from "../utils/sanitizeText";
 import { loadImage } from "../utils/loadImage";
+import { getImageUrlWithFallback } from "../utils/fetchImageWithFallback";
 import { UserData, UserResponse } from "../types";
 
 // Route definition
@@ -28,13 +29,15 @@ export const userRoute = new Hono().get("/:id", async (c) => {
     const userHandle = sanitizeText(user.handle);
     const isUserVerified = user.is_verified;
     const userTier = getBadgeTier(user.total_audio_balance);
-    const profilePicture = user.profile_picture?.["480x480"];
-    const coverPhoto = user.cover_photo?.["2000x"];
+
+    // Use mirror fallback for images
+    const profilePicture = await getImageUrlWithFallback(user.profile_picture, "480x480");
+    const coverPhoto = await getImageUrlWithFallback(user.cover_photo, "2000x");
 
     // Load fallback images only if needed
-    const finalProfilePicture = profilePicture || (await loadImage(c, "/images/blank-profile-picture.png"))!;
+    const finalProfilePicture = profilePicture ?? (await loadImage(c, "/images/blank-profile-picture.png"))!;
     const finalCoverPhoto =
-      coverPhoto || (profilePicture ? undefined : (await loadImage(c, "/images/blank-cover-photo.jpg"))!);
+      coverPhoto ?? (profilePicture ? undefined : (await loadImage(c, "/images/blank-cover-photo.jpg"))!);
 
     // Load fonts
     const font = await getLocalFonts(c, [

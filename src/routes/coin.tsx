@@ -6,6 +6,7 @@ import { VerifiedIcon } from "../components/VerifiedIcon";
 import { getLocalFonts } from "../utils/getFonts";
 import { APIService } from "../api";
 import { loadImage } from "../utils/loadImage";
+import { getImageUrlWithFallback } from "../utils/fetchImageWithFallback";
 import { CoinResponse, UserResponse } from "../types";
 import { sanitizeText } from "../utils/sanitizeText";
 
@@ -33,18 +34,18 @@ export const coinRoute = new Hono().get("/:ticker", async (c) => {
     const coinTicker = coin.name ? coin.ticker || coin.symbol || `$${ticker}` : null;
     const coinLogo = coin.logo_uri;
 
-    // Prepare user data
+    // Prepare user data with mirror fallback
     const artistName = sanitizeText(user.name);
-    const artistProfilePicture = user.profile_picture?.["480x480"];
-    const artistCoverPhoto = user.cover_photo?.["2000x"];
+    const artistProfilePicture = await getImageUrlWithFallback(user.profile_picture, "480x480");
+    const artistCoverPhoto = await getImageUrlWithFallback(user.cover_photo, "2000x");
     const isUserVerified = user.is_verified;
 
     const border = await loadImage(c, "/images/coin-border.png");
     // Load fallback images if needed
-    const finalCoinLogo = coinLogo || (await loadImage(c, "/icons/TokenGold.svg"))!;
-    const finalProfilePicture = artistProfilePicture || (await loadImage(c, "/images/blank-profile-picture.png"))!;
+    const finalCoinLogo = coinLogo ?? (await loadImage(c, "/icons/TokenGold.svg"))!;
+    const finalProfilePicture = artistProfilePicture ?? (await loadImage(c, "/images/blank-profile-picture.png"))!;
     const finalCoverPhoto =
-      artistCoverPhoto || (artistProfilePicture ? undefined : (await loadImage(c, "/images/blank-cover-photo.jpg"))!);
+      artistCoverPhoto ?? (artistProfilePicture ? undefined : (await loadImage(c, "/images/blank-cover-photo.jpg"))!);
 
     // Load fonts
     const font = await getLocalFonts(c, [

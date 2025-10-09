@@ -11,8 +11,10 @@ import { getLocalFonts } from "../utils/getFonts";
 import { getDominantColor } from "../utils/getDominantColor";
 import { sanitizeText } from "../utils/sanitizeText";
 import { loadImage } from "../utils/loadImage";
+import { getImageUrlWithFallback } from "../utils/fetchImageWithFallback";
 import { UserBadge } from "../components/UserBadge";
 import { blendWithWhite } from "../utils/blendWithWhite";
+import type { SquareImage } from "../types";
 
 // Feature-specific types
 interface UserInfo {
@@ -20,13 +22,13 @@ interface UserInfo {
   name: string;
   is_verified: boolean;
   total_audio_balance: number;
-  profile_picture: Record<string, string>;
+  profile_picture?: SquareImage;
 }
 
 interface TrackData {
   id: string;
   title: string;
-  artwork: Record<string, string>;
+  artwork?: SquareImage;
   user: UserInfo;
 }
 
@@ -84,16 +86,18 @@ async function renderCommentOGImage(c: any, commentId: string) {
   const isCommenterVerified = user.is_verified;
   const commenterTier = getBadgeTier(user.total_audio_balance);
 
-  const trackArtwork = track.artwork["150x150"];
-  const userProfilePicture = user.profile_picture["150x150"];
+  // Use mirror fallback for images
+  const trackArtwork = await getImageUrlWithFallback(track.artwork, "150x150");
+  const userProfilePicture = await getImageUrlWithFallback(user.profile_picture, "150x150");
 
   // Load fallback images
   const fallbackProfilePic = await loadImage(c, "/images/blank-profile-picture.png");
   const fallbackArtwork = await loadImage(c, "/images/blank-artwork.png");
-  const finalUserProfilePicture = userProfilePicture || fallbackProfilePic || undefined;
-  const finalArtwork = trackArtwork || fallbackArtwork!;
+  const finalUserProfilePicture = userProfilePicture ?? fallbackProfilePic ?? undefined;
+  const finalArtwork = trackArtwork ?? fallbackArtwork!;
 
-  const dominantColor = trackArtwork ? await getDominantColor(trackArtwork) : undefined;
+  // Get dominant color with mirror fallback
+  const dominantColor = trackArtwork ? await getDominantColor(trackArtwork, track.artwork?.mirrors) : undefined;
 
   const renderContent = () => (
     <BaseLayout>

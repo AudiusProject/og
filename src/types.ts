@@ -1,5 +1,19 @@
 // Shared types for OG image generation
 
+// Image types with mirror support
+export interface SquareImage {
+  "150x150"?: string;
+  "480x480"?: string;
+  "1000x1000"?: string;
+  mirrors?: string[];
+}
+
+export interface RectangleImage {
+  "640x"?: string;
+  "2000x"?: string;
+  mirrors?: string[];
+}
+
 // User-related types
 export interface UserData {
   id?: string;
@@ -7,8 +21,8 @@ export interface UserData {
   handle: string;
   is_verified: boolean;
   total_audio_balance: number;
-  profile_picture: Record<string, string>;
-  cover_photo?: Record<string, string>;
+  profile_picture?: SquareImage;
+  cover_photo?: RectangleImage;
   profile_type?: string;
   track_count?: number;
 }
