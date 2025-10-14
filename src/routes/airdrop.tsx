@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
 import { APIService } from "../api";
 import { getLocalFonts } from "../utils/getFonts";
 import { loadImage } from "../utils/loadImage";
+import { createDiscordFriendlyImageResponse } from "../utils/imageResponse";
 
 // Feature-specific types
 interface UserData {
@@ -74,7 +74,7 @@ async function renderAirdropOGImage(c: any, handle?: string) {
     </BaseLayout>
   );
 
-  return new ImageResponse(renderContent(), {
+  return createDiscordFriendlyImageResponse(renderContent(), {
     width: 1200,
     height: 630,
     fonts: Array.isArray(font) ? [...font] : [font],

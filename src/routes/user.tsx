@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
 import { UserBadge } from "../components/UserBadge";
 import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
@@ -10,6 +9,7 @@ import { APIService } from "../api";
 import { sanitizeText } from "../utils/sanitizeText";
 import { loadImage } from "../utils/loadImage";
 import { getImageUrlWithFallback } from "../utils/fetchImageWithFallback";
+import { createDiscordFriendlyImageResponse } from "../utils/imageResponse";
 import { UserData, UserResponse } from "../types";
 
 // Route definition
@@ -247,7 +247,7 @@ export const userRoute = new Hono().get("/:id", async (c) => {
       </BaseLayout>
     );
 
-    return new ImageResponse(renderContent(), {
+    return createDiscordFriendlyImageResponse(renderContent(), {
       width: 1200,
       height: 630,
       fonts: Array.isArray(font) ? [...font] : [font],

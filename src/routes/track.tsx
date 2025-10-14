@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
 import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
 import { PlayButton } from "../components/PlayButton";
@@ -13,6 +12,7 @@ import { APIService } from "../api";
 import { getDominantColor } from "../utils/getDominantColor";
 import { loadImage } from "../utils/loadImage";
 import { getImageUrlWithFallback } from "../utils/fetchImageWithFallback";
+import { createDiscordFriendlyImageResponse } from "../utils/imageResponse";
 import type { SquareImage } from "../types";
 
 // Feature-specific types
@@ -142,7 +142,7 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
       </BaseLayout>
     );
 
-    return new ImageResponse(renderContent(), {
+    return createDiscordFriendlyImageResponse(renderContent(), {
       width: 1200,
       height: 630,
       fonts: Array.isArray(font) ? [...font] : [font],

@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
 import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
 import { VerifiedIcon } from "../components/VerifiedIcon";
@@ -7,6 +6,7 @@ import { getLocalFonts } from "../utils/getFonts";
 import { APIService } from "../api";
 import { loadImage } from "../utils/loadImage";
 import { getImageUrlWithFallback } from "../utils/fetchImageWithFallback";
+import { createDiscordFriendlyImageResponse } from "../utils/imageResponse";
 import { CoinResponse, UserResponse } from "../types";
 import { sanitizeText } from "../utils/sanitizeText";
 
@@ -321,7 +321,7 @@ export const coinRoute = new Hono().get("/:ticker", async (c) => {
       </BaseLayout>
     );
 
-    return new ImageResponse(renderContent(), {
+    return createDiscordFriendlyImageResponse(renderContent(), {
       width: 1200,
       height: 630,
       fonts: Array.isArray(font) ? [...font] : [font],

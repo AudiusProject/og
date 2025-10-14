@@ -1,7 +1,7 @@
 import { Hono } from "hono";
-import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
 import { loadImage } from "../utils/loadImage";
+import { createDiscordFriendlyImageResponse } from "../utils/imageResponse";
 
 // Feature-specific constants
 const COINS_BACKGROUND = "/images/coins.png";
@@ -32,7 +32,7 @@ async function renderCoinsOGImage(c: any) {
     </BaseLayout>
   );
 
-  return new ImageResponse(renderContent(), {
+  return createDiscordFriendlyImageResponse(renderContent(), {
     width: 1200,
     height: 630,
   });

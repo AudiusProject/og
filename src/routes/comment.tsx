@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { BaseLayout } from "../components/BaseLayout";
 import { AudiusLogoHorizontal } from "../components/AudiusLogoHorizontal";
 import { Title } from "../components/Title";
@@ -14,6 +13,7 @@ import { loadImage } from "../utils/loadImage";
 import { getImageUrlWithFallback } from "../utils/fetchImageWithFallback";
 import { UserBadge } from "../components/UserBadge";
 import { blendWithWhite } from "../utils/blendWithWhite";
+import { createDiscordFriendlyImageResponse } from "../utils/imageResponse";
 import type { SquareImage } from "../types";
 
 // Feature-specific types
@@ -271,7 +271,7 @@ async function renderCommentOGImage(c: any, commentId: string) {
     { path: "Inter-Light.ttf", weight: 300 },
   ]);
 
-  return new ImageResponse(renderContent(), {
+  return createDiscordFriendlyImageResponse(renderContent(), {
     width: 1200,
     height: 630,
     fonts: Array.isArray(font) ? [...font] : [font],
