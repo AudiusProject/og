@@ -1,5 +1,5 @@
 export function DogEar() {
-  const size = 60;
+  const size = 100;
   const borderRadius = 20;
 
   // Coin gradient colors
