@@ -23,7 +23,7 @@ export function Artwork({ src, alt = "Artwork", size = 598, dominantColor, style
         position: "relative",
         overflow: "hidden",
         border: size >= 598 ? `2px solid ${borderColor}` : `1px solid ${borderColor}`,
-        borderRadius: size >= 598 ? "24px" : "10px",
+        borderRadius: size >= 598 ? "20px" : "10px",
         ...style,
       }}
     >

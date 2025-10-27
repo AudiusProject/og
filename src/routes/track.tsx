@@ -6,6 +6,7 @@ import { ContentTag } from "../components/ContentTag";
 import { Title } from "../components/Title";
 import { UserName } from "../components/UserName";
 import { Artwork } from "../components/Artwork";
+import { DogEar } from "../components/DogEar";
 import { getBadgeTier } from "../utils/badge";
 import { getLocalFonts } from "../utils/getFonts";
 import { APIService } from "../api";
@@ -24,11 +25,25 @@ interface UserInfo {
   profile_picture?: SquareImage;
 }
 
+interface StreamConditions {
+  token_gate?: {
+    token_mint: string;
+    token_amount: number;
+  };
+  usdc_purchase?: {
+    price: number;
+  };
+  follow_user_id?: number;
+  tip_user_id?: number;
+}
+
 interface TrackData {
   id?: string;
   title: string;
   artwork?: SquareImage;
   user: UserInfo;
+  stream_conditions?: StreamConditions | null;
+  is_stream_gated?: boolean;
 }
 
 interface TrackResponse {
@@ -61,6 +76,9 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
     // Load fallback artwork only if needed
     const finalArtwork = trackArtwork ?? (await loadImage(c, "/images/blank-artwork.png"))!;
 
+    // Check if track is token gated (artist coin gated)
+    const isTokenGated = track.stream_conditions?.token_gate !== undefined;
+
     // Load fonts
     const font = await getLocalFonts(c, [
       { path: "Inter-Bold.ttf", weight: 700 },
@@ -84,8 +102,11 @@ export const trackRoute = new Hono().get("/:id", async (c) => {
             background: dominantColor || "#000",
           }}
         >
-          {/* Artwork */}
-          <Artwork src={finalArtwork} alt="Track Artwork" dominantColor={dominantColor} />
+          {/* Artwork Container */}
+          <div style={{ display: "flex", position: "relative" }}>
+            <Artwork src={finalArtwork} alt="Track Artwork" dominantColor={dominantColor} />
+            {isTokenGated && <DogEar />}
+          </div>
 
           {/* Right Side */}
           <div

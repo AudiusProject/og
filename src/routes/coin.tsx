@@ -16,9 +16,12 @@ export const coinRoute = new Hono().get("/:ticker", async (c) => {
     const ticker = c.req.param("ticker");
     if (!ticker) return c.json({ error: "Missing ticker" }, 400);
 
+    // Normalize ticker to uppercase for API call
+    const normalizedTicker = ticker.toUpperCase();
+
     // Fetch coin data using APIService
     const apiService = new APIService(c);
-    const response: CoinResponse = await apiService.fetch(`/v1/coins/ticker/${ticker}`);
+    const response: CoinResponse = await apiService.fetch(`/v1/coins/ticker/${normalizedTicker}`);
     if (!response.data) return c.json({ error: "Coin not found" }, 404);
     const coin = response.data;
 
