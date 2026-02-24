@@ -7,6 +7,7 @@ import { collectionRoute } from "./routes/collection";
 import { userRoute } from "./routes/user";
 import { coinRoute } from "./routes/coin";
 import { coinsRoute } from "./routes/coins";
+import { defaultRoute } from "./routes/default";
 
 const app = new Hono()
   .use("*", logger())
@@ -17,6 +18,7 @@ const app = new Hono()
   .route("/user", userRoute)
   .route("/coin", coinRoute)
   .route("/coins", coinsRoute)
+  .route("/default", defaultRoute)
   .route("/og/comment", commentRoute); // Legacy route support
 
 // Health check and info endpoint
@@ -25,6 +27,7 @@ app.get("/", async (c) => {
     service: "Audius OG Image Generator",
     version: "1.0.0",
     endpoints: {
+      default: "/default",
       airdrop: "/airdrop/:handle?",
       comment: "/comment/:id",
       track: "/track/:id",
@@ -34,7 +37,7 @@ app.get("/", async (c) => {
       coins: "/coins",
       "comment (legacy)": "/og/comment/:id",
     },
-    implemented: ["airdrop", "comment", "track", "collection", "user", "coin", "coins"],
+    implemented: ["default", "airdrop", "comment", "track", "collection", "user", "coin", "coins"],
   });
 });
 
