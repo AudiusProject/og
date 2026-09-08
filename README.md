@@ -42,12 +42,19 @@ Generate OG images by making GET requests to specific endpoints:
 /og/comment/[comment-id]  # Generic route
 ```
 
-### Coming Soon
+#### Entity Images
 ```
-/og/track/[track-id]      # Track OG images
-/og/user/[user-id]        # User profile OG images  
-/og/collection/[collection-id]  # Collection OG images
+/track/[track-id]
+/collection/[collection-id]
+/user/[user-id]
+/coin/[ticker]
 ```
+
+#### Weekly Rotation Images
+```
+/weekly-rotation/[handle]   # 2x2 collage of the first four tracks in the user's current mix
+```
+The web app appends `?week=YYYY-WW` so URL-keyed scraper caches roll over with the mix.
 
 ## Architecture
 

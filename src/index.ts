@@ -8,6 +8,7 @@ import { userRoute } from "./routes/user";
 import { coinRoute } from "./routes/coin";
 import { coinsRoute } from "./routes/coins";
 import { defaultRoute } from "./routes/default";
+import { weeklyRotationRoute } from "./routes/weeklyRotation";
 
 const app = new Hono()
   .use("*", logger())
@@ -19,6 +20,7 @@ const app = new Hono()
   .route("/coin", coinRoute)
   .route("/coins", coinsRoute)
   .route("/default", defaultRoute)
+  .route("/weekly-rotation", weeklyRotationRoute)
   .route("/og/comment", commentRoute); // Legacy route support
 
 // Health check and info endpoint
@@ -35,9 +37,10 @@ app.get("/", async (c) => {
       user: "/user/:id",
       coin: "/coin/:ticker",
       coins: "/coins",
+      "weekly-rotation": "/weekly-rotation/:handle",
       "comment (legacy)": "/og/comment/:id",
     },
-    implemented: ["default", "airdrop", "comment", "track", "collection", "user", "coin", "coins"],
+    implemented: ["default", "airdrop", "comment", "track", "collection", "user", "coin", "coins", "weekly-rotation"],
   });
 });
 
