@@ -16,11 +16,9 @@ interface ArtworkCollageProps {
 }
 
 /**
- * A 2x2 grid of artwork in the same frame `Artwork` uses, for surfaces that
- * have no single cover image of their own (a generated mix, a lineup). A
- * single image is not special-cased into a full-bleed square: the grid is
- * the visual signature of "this is a set of tracks", and a one-track set is
- * still a set.
+ * A 2x2 grid of artwork in the same frame `Artwork` uses, for mixes and
+ * lineups with no single cover. Always renders four cells, padding with
+ * `fallback`.
  */
 export function ArtworkCollage({
   srcs,
@@ -32,9 +30,8 @@ export function ArtworkCollage({
 }: ArtworkCollageProps) {
   const borderColor = dominantColor ? blendWithWhite(dominantColor.replace("#", ""), 0.1) : "#FFF";
   const cells = [0, 1, 2, 3].map((i) => srcs[i] ?? fallback);
-  // Satori lays out border-box, so the border comes out of the inner width.
-  // A cell sized from the outer width doesn't fit two per row and the grid
-  // silently collapses into a single column.
+  // Satori is border-box: subtract the border before sizing cells so two fit
+  // per row.
   const innerSize = size - 2 * BORDER_WIDTH;
   const cellSize = (innerSize - gap) / 2;
 
