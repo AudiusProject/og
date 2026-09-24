@@ -34,6 +34,19 @@ export class APIService {
     return res.json();
   }
 
+  // Same as fetch, but resolves to null on a 404.
+  async fetchOrNull<T>(endpoint: string): Promise<T | null> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const res = await fetch(url);
+
+    if (res.status === 404) return null;
+    if (!res.ok) {
+      throw new Error(`API request failed: ${res.status} ${res.statusText}`);
+    }
+
+    return res.json();
+  }
+
   // Keep this as it's used by airdrop feature
   async fetchAllocation(handle: string): Promise<number | null> {
     if (!handle) return null;

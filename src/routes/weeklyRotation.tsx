@@ -28,6 +28,10 @@ const MIX_LIMIT = 30;
 // pick up the new week; this header covers everything in between.
 const ROLLOVER_WEEKDAY_UTC = 3; // Sunday = 0
 
+// Cache lifetime for a card with no tracks, so a new listener's card fills in
+// before the next rollover.
+const EMPTY_MIX_MAX_AGE_SECONDS = 60 * 60;
+
 interface WeeklyRotationTrack {
   id: string;
   artwork?: SquareImage;
@@ -41,12 +45,12 @@ interface WeeklyRotationResponse {
   data?: WeeklyRotationTrack[];
 }
 
-function secondsUntilNextRollover(now: Date): number {
+function nextRollover(now: Date): Date {
   const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
   let daysAhead = (ROLLOVER_WEEKDAY_UTC - next.getUTCDay() + 7) % 7;
   if (daysAhead === 0) daysAhead = 7;
   next.setUTCDate(next.getUTCDate() + daysAhead);
-  return Math.max(60, Math.floor((next.getTime() - now.getTime()) / 1000));
+  return next;
 }
 
 /**
@@ -61,12 +65,24 @@ export const weeklyRotationRoute = new Hono().get("/:handle", async (c) => {
     const handle = c.req.param("handle");
     if (!handle) return c.json({ error: "Missing handle" }, 400);
 
+    // Cache the rendered card per handle and period. The key ignores the
+    // request's query string, so every ?week= variant shares one entry.
+    const now = new Date();
+    const rollover = nextRollover(now);
+    const periodStart = new Date(rollover.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const cache = caches.default;
+    const cacheKey = new Request(
+      `${new URL(c.req.url).origin}/weekly-rotation/${encodeURIComponent(handle.toLowerCase())}?period=${periodStart}`,
+    );
+    const cached = await cache.match(cacheKey);
+    if (cached) return cached;
+
     const apiService = new APIService(c);
 
-    const userResponse: UserByHandleResponse = await apiService.fetch(
+    const userResponse = await apiService.fetchOrNull<UserByHandleResponse>(
       `/v1/full/users/handle/${encodeURIComponent(handle)}`,
     );
-    const user = Array.isArray(userResponse.data) ? userResponse.data[0] : userResponse.data;
+    const user = Array.isArray(userResponse?.data) ? userResponse.data[0] : userResponse?.data;
     if (!user?.id) return c.json({ error: "User not found" }, 404);
 
     const mixResponse: WeeklyRotationResponse = await apiService.fetch(
@@ -164,9 +180,13 @@ export const weeklyRotationRoute = new Hono().get("/:handle", async (c) => {
       height: 630,
       fonts: Array.isArray(font) ? [...font] : [font],
     });
-    // Not immutable, unlike the entity cards: the same URL means a new
-    // image once the week rolls over.
-    response.headers.set("Cache-Control", `public, max-age=${secondsUntilNextRollover(new Date())}`);
+    // Expire at the next rollover since the mix changes weekly.
+    const maxAge =
+      tracks.length === 0
+        ? EMPTY_MIX_MAX_AGE_SECONDS
+        : Math.max(60, Math.floor((rollover.getTime() - now.getTime()) / 1000));
+    response.headers.set("Cache-Control", `public, max-age=${maxAge}`);
+    c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
     return response;
   } catch (error: any) {
     console.error("Weekly Rotation OG Image generation error:", error);
